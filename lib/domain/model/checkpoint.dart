@@ -1,6 +1,6 @@
 class Checkpoint {
   final String info;
-  final DateTime time;
+  final int time;
 
   Checkpoint({
     required this.info,

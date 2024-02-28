@@ -4,12 +4,11 @@ class Participant {
   final String name;
   final String surname;
   final int chip;
-  final List<Checkpoint> result;
+  List<Checkpoint>? split;
 
   Participant({
     required this.name,
     required this.surname,
     required this.chip,
-    required this.result,
   });
 }
