@@ -11,4 +11,9 @@ class ApiUtil {
     final result = await _localService.getParticipant();
     return ParticipantMapper.fromApi(result);
   }
+
+  Future setParticipant(Participant participant) async {
+    final map = ParticipantMapper.toApi(participant);
+    await _localService.setParticipant(map);
+  }
 }

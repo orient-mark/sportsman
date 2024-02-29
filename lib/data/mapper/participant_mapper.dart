@@ -9,4 +9,10 @@ class ParticipantMapper {
       chip: participant.chip.toInt(),
     );
   }
+
+  static Map toApi(Participant participant) => {
+        'name': participant.name,
+        'surname': participant.surname,
+        'number_chip': participant.chip,
+      };
 }
