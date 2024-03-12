@@ -1,4 +1,4 @@
-import 'package:sportsman/data/api/api_participant.dart';
+import 'package:sportsman/data/api/model/api_participant.dart';
 import 'package:sportsman/domain/model/participant.dart';
 
 class ParticipantMapper {

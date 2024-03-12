@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
-import 'package:sportsman/data/api/api_participant.dart';
+import 'package:sportsman/data/api/model/api_participant.dart';
 
 class LocalService {
   final String pathParticipant = 'data/participant.json';

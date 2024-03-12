@@ -11,4 +11,9 @@ class ParticipantDataRepository extends ParticipantRepository {
   Future<Participant> getParticipant() {
     return _apiUtil.getParticipant();
   }
+
+  @override
+  Future setParticipant(Participant participant) {
+    return _apiUtil.setParticipant(participant);
+  }
 }
