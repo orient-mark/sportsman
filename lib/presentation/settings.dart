@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:sportsman/domain/state/home/home_state.dart';
-import 'package:sportsman/internal/dependencies/home_module.dart';
+import 'package:sportsman/domain/state/settings/settings_state.dart';
+import 'package:sportsman/internal/dependencies/view/settings_module.dart';
 
-class Home extends StatefulWidget {
-  const Home({super.key});
+class Settings extends StatefulWidget {
+  const Settings({super.key});
 
   @override
-  _HomeState createState() => _HomeState();
+  _SettingsState createState() => _SettingsState();
 }
 
-class _HomeState extends State<Home> {
+class _SettingsState extends State<Settings> {
   final _nameController = TextEditingController();
   final _surnameController = TextEditingController();
   final _chipController = TextEditingController();
 
-  late HomeState _homeState;
+  late SettingsState _settingsState;
 
   @override
   void initState() {
     super.initState();
-    _homeState = HomeModule.homeState();
+    _settingsState = SettingsModule.settingsState();
   }
 
   @override
@@ -91,18 +91,18 @@ class _HomeState extends State<Home> {
   Widget _getParticipantInfo() {
     return Observer(
       builder: (_) {
-        if (_homeState.isLoading)
+        if (_settingsState.isLoading)
           return Center(
             child: CircularProgressIndicator(),
           );
-        if (_homeState.isGeted == false) return Container();
+        if (_settingsState.isGeted == false) return Container();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Имя: ${_homeState.participant.name}'),
-            Text('Фамилия: ${_homeState.participant.surname}'),
-            Text('Чип: ${_homeState.participant.chip}'),
+            Text('Имя: ${_settingsState.participant.name}'),
+            Text('Фамилия: ${_settingsState.participant.surname}'),
+            Text('Чип: ${_settingsState.participant.chip}'),
           ],
         );
       },
@@ -111,7 +111,7 @@ class _HomeState extends State<Home> {
 
   void _getParticipant() {
     // здесь получаем данные
-    _homeState.getParticipant();
+    _settingsState.getParticipant();
   }
 
   void _setParticipant() {
@@ -119,6 +119,6 @@ class _HomeState extends State<Home> {
     final name = _nameController.text;
     final surname = _surnameController.text;
     final chip = int.parse(_chipController.text);
-    _homeState.setParticipant(name, surname, chip);
+    _settingsState.setParticipant(name, surname, chip);
   }
 }

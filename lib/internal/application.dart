@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:sportsman/presentation/home.dart';
+import 'package:sportsman/presentation/settings.dart';
 
 class Application extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Home(),
+      home: Settings(),
     );
   }
 }

@@ -3,12 +3,12 @@ import 'package:sportsman/domain/model/participant.dart';
 
 import 'package:sportsman/domain/repository/participant_repository.dart';
 
-part 'home_state.g.dart';
+part 'settings_state.g.dart';
 
-class HomeState = HomeStateBase with _$HomeState;
+class SettingsState = SettingsStateBase with _$SettingsState;
 
-abstract class HomeStateBase with Store {
-  HomeStateBase(this._participantRepository);
+abstract class SettingsStateBase with Store {
+  SettingsStateBase(this._participantRepository);
 
   final ParticipantRepository _participantRepository;
 
@@ -26,6 +26,7 @@ abstract class HomeStateBase with Store {
     isLoading = true;
     final data = await _participantRepository.getParticipant();
     participant = data;
+    isGeted = true;
     isLoading = false;
   }
 
@@ -34,7 +35,7 @@ abstract class HomeStateBase with Store {
     isLoading = true;
     participant = Participant(name: name, surname: surname, chip: chip);
     await _participantRepository.setParticipant(participant);
-    isGeted = true;
+    isGeted = false;
     isLoading = false;
   }
 }
