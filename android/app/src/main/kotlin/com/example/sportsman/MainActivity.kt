@@ -1,4 +1,5 @@
-package com.example.qr_check
+package com.example.sportsman
+
 
 import io.flutter.embedding.android.FlutterActivity
 
