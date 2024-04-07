@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:js';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:sportsman/data/api/model/api_checkpoint.dart';
