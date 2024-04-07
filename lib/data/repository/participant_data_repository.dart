@@ -1,5 +1,4 @@
 import 'package:sportsman/data/api/api_util.dart';
-import 'package:sportsman/domain/model/checkpoint.dart';
 import 'package:sportsman/domain/model/participant.dart';
 import 'package:sportsman/domain/repository/participant_repository.dart';
 
@@ -16,15 +15,5 @@ class ParticipantDataRepository extends ParticipantRepository {
   @override
   Future setParticipant(Participant participant) {
     return _apiUtil.setParticipant(participant);
-  }
-
-  @override
-  Future<List<Checkpoint>> getCheckpoints() {
-    return _apiUtil.getCheckpoints();
-  }
-
-  @override
-  Future setCheckpoint(Checkpoint checkpoint) {
-    return _apiUtil.setCheckpoint(checkpoint);
   }
 }
