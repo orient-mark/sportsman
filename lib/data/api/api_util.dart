@@ -1,5 +1,7 @@
 import 'package:sportsman/data/api/service/local_service.dart';
+import 'package:sportsman/data/mapper/checkpoint_mapper.dart';
 import 'package:sportsman/data/mapper/participant_mapper.dart';
+import 'package:sportsman/domain/model/checkpoint.dart';
 import 'package:sportsman/domain/model/participant.dart';
 
 class ApiUtil {
@@ -15,5 +17,15 @@ class ApiUtil {
   Future setParticipant(Participant participant) async {
     final map = ParticipantMapper.toApi(participant);
     await _localService.setParticipant(map);
+  }
+
+  Future<List<Checkpoint>> getCheckpoints() async {
+    final result = await _localService.getCheckpoints();
+    return CheckpointMapper.listFromApi(result);
+  }
+
+  Future setCheckpoint(Checkpoint checkpoint) async {
+    final map = CheckpointMapper.toApi(checkpoint);
+    await _localService.setCheckpoint(map);
   }
 }
