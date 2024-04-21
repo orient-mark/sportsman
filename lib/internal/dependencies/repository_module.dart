@@ -1,3 +1,4 @@
+import 'package:sportsman/data/repository/checkpoint_data_repository.dart';
 import 'package:sportsman/data/repository/participant_data_repository.dart';
 import 'package:sportsman/domain/repository/checkpoint_repository.dart';
 import 'package:sportsman/domain/repository/participant_repository.dart';
