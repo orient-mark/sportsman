@@ -24,6 +24,11 @@ class ApiUtil {
     return CheckpointMapper.listFromApi(result);
   }
 
+  Future<Checkpoint> getCheckpoint() async {
+    final result = await _localService.getCheckpoints();
+    return CheckpointMapper.fromApi(result);
+  }
+
   Future setCheckpoint(Checkpoint checkpoint) async {
     final map = CheckpointMapper.toApi(checkpoint);
     await _localService.setCheckpoint(map);

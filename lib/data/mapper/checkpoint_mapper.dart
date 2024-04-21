@@ -2,7 +2,7 @@ import 'package:sportsman/data/api/model/api_checkpoint.dart';
 import 'package:sportsman/domain/model/checkpoint.dart';
 
 class CheckpointMapper {
-  static Checkpoint fromApi(ApiCheckpoint checkpoint) {
+  static Checkpoint _fromApi(ApiCheckpoint checkpoint) {
     return Checkpoint(
       info: checkpoint.info.toString(),
       time: checkpoint.time.toInt(),
@@ -12,9 +12,13 @@ class CheckpointMapper {
   static List<Checkpoint> listFromApi(List<ApiCheckpoint> dataList) {
     var split = <Checkpoint>[];
     for (var data in dataList) {
-      split.add(CheckpointMapper.fromApi(data));
+      split.add(_fromApi(data));
     }
     return split;
+  }
+
+  static Checkpoint fromApi(List<ApiCheckpoint> dataList) {
+    return _fromApi(dataList[dataList.length - 1]);
   }
 
   static Map toApi(Checkpoint checkpoint) => {
