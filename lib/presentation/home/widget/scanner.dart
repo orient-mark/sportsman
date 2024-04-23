@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:sportsman/domain/state/home/scanner_state.dart';
 import 'package:sportsman/internal/dependencies/view/home/scanner_module.dart';
+import 'package:sportsman/presentation/home/widget/scanner_button_widgets.dart';
 
 class Scanner extends StatefulWidget {
   const Scanner({super.key});
@@ -64,8 +65,12 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20),
             child: //Container(color: Colors.green)
-                _mobileScanner(),
+                _scanner(),
           ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 20),
+          child: _scannerConsole(),
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 20),
@@ -76,10 +81,21 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
     );
   }
 
-  Widget _mobileScanner() {
+  Widget _scanner() {
     return MobileScanner(
       controller: controller,
       fit: BoxFit.contain,
+    );
+  }
+
+  Widget _scannerConsole() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ToggleFlashlightButton(controller: controller),
+        StartStopMobileScannerButton(controller: controller),
+        SwitchCameraButton(controller: controller),
+      ],
     );
   }
 
