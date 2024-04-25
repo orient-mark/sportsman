@@ -1,5 +1,5 @@
-import 'package:sportsman/data/api/model/api_checkpoint.dart';
-import 'package:sportsman/domain/model/checkpoint.dart';
+import '../../domain/model/checkpoint.dart';
+import '../api/model/api_checkpoint.dart';
 
 class CheckpointMapper {
   static Checkpoint _fromApi(ApiCheckpoint checkpoint) {

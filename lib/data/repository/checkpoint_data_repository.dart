@@ -1,6 +1,6 @@
-import 'package:sportsman/data/api/api_util.dart';
-import 'package:sportsman/domain/model/checkpoint.dart';
-import 'package:sportsman/domain/repository/checkpoint_repository.dart';
+import '../../domain/model/checkpoint.dart';
+import '../../domain/repository/checkpoint_repository.dart';
+import '../api/api_util.dart';
 
 class CheckpointDataRepository extends CheckpointRepository {
   final ApiUtil _apiUtil;

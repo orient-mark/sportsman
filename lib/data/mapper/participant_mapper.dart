@@ -1,5 +1,5 @@
-import 'package:sportsman/data/api/model/api_participant.dart';
-import 'package:sportsman/domain/model/participant.dart';
+import '../../domain/model/participant.dart';
+import '../api/model/api_participant.dart';
 
 class ParticipantMapper {
   static Participant fromApi(ApiParticipant participant) {

@@ -1,8 +1,8 @@
-import 'package:sportsman/data/api/service/local_service.dart';
-import 'package:sportsman/data/mapper/checkpoint_mapper.dart';
-import 'package:sportsman/data/mapper/participant_mapper.dart';
-import 'package:sportsman/domain/model/checkpoint.dart';
-import 'package:sportsman/domain/model/participant.dart';
+import '../../domain/model/checkpoint.dart';
+import '../../domain/model/participant.dart';
+import '../mapper/checkpoint_mapper.dart';
+import '../mapper/participant_mapper.dart';
+import 'service/local_service.dart';
 
 class ApiUtil {
   final LocalService _localService;

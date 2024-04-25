@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
-import 'package:sportsman/data/api/model/api_checkpoint.dart';
-import 'package:sportsman/data/api/model/api_participant.dart';
+
+import '../model/api_checkpoint.dart';
+import '../model/api_participant.dart';
 
 class LocalService {
   final String _pathParticipant = 'data/participant.json';

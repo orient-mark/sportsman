@@ -1,6 +1,6 @@
-import 'package:sportsman/data/api/api_util.dart';
-import 'package:sportsman/domain/model/participant.dart';
-import 'package:sportsman/domain/repository/participant_repository.dart';
+import '../../domain/model/participant.dart';
+import '../../domain/repository/participant_repository.dart';
+import '../api/api_util.dart';
 
 class ParticipantDataRepository extends ParticipantRepository {
   final ApiUtil _apiUtil;
