@@ -19,18 +19,30 @@ class ApiUtil {
     await _localService.setParticipant(map);
   }
 
-  Future<List<Checkpoint>> getCheckpoints() async {
+  Future<List<Checkpoint>?> getCheckpoints() async {
     final result = await _localService.getCheckpoints();
-    return CheckpointMapper.listFromApi(result);
+    if (result != null) {
+      return CheckpointMapper.listFromApi(result);
+    } else {
+      return null;
+    }
   }
 
-  Future<Checkpoint> getCheckpoint() async {
-    final result = await _localService.getCheckpoints();
-    return CheckpointMapper.fromApi(result);
+  Future<Checkpoint?> getCheckpoint() async {
+    final result = await _localService.getCheckpoint();
+    if (result != null) {
+      return CheckpointMapper.fromApi(result);
+    } else {
+      return null;
+    }
   }
 
   Future setCheckpoint(Checkpoint checkpoint) async {
     final map = CheckpointMapper.toApi(checkpoint);
     await _localService.setCheckpoint(map);
+  }
+
+  Future deleteCheckpoints() async {
+    await _localService.deleteCheckpoints();
   }
 }

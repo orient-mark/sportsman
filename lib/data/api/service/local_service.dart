@@ -37,6 +37,11 @@ class LocalService {
     return await file.readAsString();
   }
 
+  Future deleteFile(String path) async {
+    final file = await getFile(path);
+    await file.delete();
+  }
+
   Future<ApiParticipant> getParticipant() async {
     final contents = await readFile(pathParticipant);
     final map = jsonDecode(contents);
@@ -49,15 +54,43 @@ class LocalService {
   }
 
   /// Получение сплита состоящего из Checkpoints
-  Future<List<ApiCheckpoint>> getCheckpoints() async {
-    final contents = await readFile(pathParticipant);
-    final dataList = jsonDecode(contents);
-    return ApiCheckpoint.splitFromApi(dataList);
+  Future<List<ApiCheckpoint>?> getCheckpoints() async {
+    final contents = await readFile(pathCheckpoints);
+    if (contents.isNotEmpty) {
+      final dataList = jsonDecode(contents);
+      return ApiCheckpoint.splitFromApi(dataList);
+    } else {
+      return null;
+    }
+  }
+
+  /// Получение последнего загруженого Checkpoints
+  Future<ApiCheckpoint?> getCheckpoint() async {
+    final contents = await readFile(pathCheckpoints);
+    if (contents.isNotEmpty) {
+      final List<dynamic> dataList = jsonDecode(contents);
+      return ApiCheckpoint.fromApi(dataList[dataList.length - 1]);
+    } else {
+      return null;
+    }
   }
 
   /// Записать данные сплита в файл
   Future setCheckpoint(Map map) async {
-    final contents = jsonEncode(map);
-    await appendFile(pathCheckpoints, contents);
+    final contents = await readFile(pathCheckpoints);
+    late List<dynamic> dataList;
+    if (contents.isNotEmpty) {
+      dataList = jsonDecode(contents);
+    } else {
+      dataList = <dynamic>[];
+    }
+    dataList.add(map);
+    final content = jsonEncode(dataList);
+    await writeFile(pathCheckpoints, content);
+  }
+
+  /// Очистить данные сплита
+  Future deleteCheckpoints() async {
+    await deleteFile(pathCheckpoints);
   }
 }
