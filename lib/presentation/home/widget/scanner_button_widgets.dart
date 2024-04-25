@@ -111,9 +111,13 @@ class ToggleFlashlightButton extends StatelessWidget {
               },
             );
           case TorchState.unavailable:
-            return const Icon(
-              Icons.no_flash,
-              color: Colors.grey,
+            return const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(
+                Icons.no_flash,
+                size: 32,
+                color: Colors.grey,
+              ),
             );
         }
       },
