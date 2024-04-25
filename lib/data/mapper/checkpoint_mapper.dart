@@ -17,8 +17,8 @@ class CheckpointMapper {
     return split;
   }
 
-  static Checkpoint fromApi(List<ApiCheckpoint> dataList) {
-    return _fromApi(dataList[dataList.length - 1]);
+  static Checkpoint fromApi(ApiCheckpoint checkpoint) {
+    return _fromApi(checkpoint);
   }
 
   static Map toApi(Checkpoint checkpoint) => {
