@@ -1,12 +1,15 @@
 /// Информация в пункте [info]
 /// Время отмеки [time]
 class ApiCheckpoint {
-  final String info;
-  final num time;
+  final String _info;
+  final num _time;
+
+  String get info => _info;
+  num get time => _time;
 
   ApiCheckpoint.fromApi(Map<String, dynamic> json)
-      : info = json['info'],
-        time = json['time'];
+      : _info = json['info'],
+        _time = json['time'];
 
   static List<ApiCheckpoint> splitFromApi(List<dynamic> dataList) {
     var split = <ApiCheckpoint>[];

@@ -1,10 +1,14 @@
 class ApiParticipant {
-  final String name;
-  final String surname;
-  final num chip;
+  final String _name;
+  final String _surname;
+  final num _chip;
+
+  String get name => _name;
+  String get surname => _surname;
+  num get chip => _chip;
 
   ApiParticipant.fromApi(Map<String, dynamic> map)
-      : name = map['name'],
-        surname = map['surname'],
-        chip = map['number_chip'];
+      : _name = map['name'],
+        _surname = map['surname'],
+        _chip = map['number_chip'];
 }
