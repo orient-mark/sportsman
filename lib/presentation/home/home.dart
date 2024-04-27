@@ -42,7 +42,7 @@ class _HomeState extends State<Home> {
                   child: ElevatedButton(
                     style: _buttonStyle,
                     onPressed: () {
-                      //TODO переход
+                      Navigator.pushNamed(context, '/result');
                     },
                     child: const Text('Показать сплит',
                         style: TextStyle(color: Colors.black)),
@@ -53,7 +53,7 @@ class _HomeState extends State<Home> {
                   iconSize: 32.0,
                   icon: const Icon(Icons.settings),
                   onPressed: () {
-                    //TODO переход
+                    Navigator.pushNamed(context, '/settings');
                   },
                 ),
               ]),

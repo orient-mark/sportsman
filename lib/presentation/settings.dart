@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:sportsman/domain/state/settings/settings_state.dart';
-import 'package:sportsman/internal/dependencies/view/settings_module.dart';
+
+import '../domain/state/settings/settings_state.dart';
+import '../internal/dependencies/view/settings_module.dart';
+import 'widgets/header.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
@@ -40,6 +42,10 @@ class _SettingsState extends State<Settings> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Header(
+              context: context,
+              title: 'Настройки',
+            ),
             _getRowInput(),
             const SizedBox(height: 20),
             ElevatedButton(
