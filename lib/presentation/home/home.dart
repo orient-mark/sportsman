@@ -24,6 +24,10 @@ class _HomeState extends State<Home> {
     );
   }
 
+  final ButtonStyle _buttonStyle = ElevatedButton.styleFrom(
+    backgroundColor: const Color.fromRGBO(255, 132, 0, 1.0),
+  );
+
   Widget _getBody() {
     return SafeArea(
       child: Padding(
@@ -32,24 +36,27 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(
-                height: 30,
-                child: Row(children: [
-                  Expanded(
-                    flex: 5,
-                    //TODO Показать QR сплита
-                    child: Container(
-                        color: const Color.fromRGBO(255, 132, 0, 1.0)),
+              Row(children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: _buttonStyle,
+                    onPressed: () {
+                      //TODO переход
+                    },
+                    child: const Text('Показать сплит',
+                        style: TextStyle(color: Colors.black)),
                   ),
-                  Expanded(
-                    //TODO sttings
-                    child: Container(color: const Color.fromRGBO(0, 0, 0, 1.0)),
-                  ),
-                ]),
-              ),
+                ),
+                IconButton(
+                  color: Colors.black,
+                  iconSize: 32.0,
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    //TODO переход
+                  },
+                ),
+              ]),
               Expanded(child: Scanner()),
-              Container(
-                  height: 30, color: const Color.fromRGBO(255, 132, 0, 1.0)),
             ]),
       ),
     );

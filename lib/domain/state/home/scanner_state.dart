@@ -17,25 +17,29 @@ abstract class ScannerStateBase with Store {
 
   @observable
   bool isLoading = false;
-
   @observable
   bool isGeted = false;
 
   @action
   Future<void> getCheckpoint() async {
     isLoading = true;
+    isGeted = false;
     final data = await _checkpointRepository.getCheckpoint();
-    checkpoint = data;
-    isGeted = true;
+    if (data != null) {
+      checkpoint = data;
+      isGeted = true;
+    }
     isLoading = false;
   }
 
   @action
   Future<void> setCheckpoint(String info, int time) async {
-    isLoading = true;
-    checkpoint = Checkpoint(info: info, time: time);
-    await _checkpointRepository.setCheckpoint(checkpoint);
-    isGeted = false;
-    isLoading = false;
+    await _checkpointRepository
+        .setCheckpoint(Checkpoint(info: info, time: time));
+  }
+
+  @action
+  Future<void> deleteCheckpoints() async {
+    await _checkpointRepository.deleteCheckpoints();
   }
 }
