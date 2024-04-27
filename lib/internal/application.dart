@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sportsman/presentation/result/result.dart';
-import 'package:sportsman/presentation/settings.dart';
+import 'package:sportsman/presentation/settings/settings.dart';
 import 'package:sportsman/presentation/home/home.dart';
 
 class Application extends StatelessWidget {

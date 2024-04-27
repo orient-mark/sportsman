@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../domain/state/settings/settings_state.dart';
-import '../internal/dependencies/view/settings_module.dart';
-import 'widgets/header.dart';
+import '../../domain/state/settings/settings_state.dart';
+import '../../internal/dependencies/view/settings_module.dart';
+import '../widgets/header.dart';
 
 class Settings extends StatefulWidget {
   const Settings({super.key});
 
   @override
-  _SettingsState createState() => _SettingsState();
+  State<Settings> createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
@@ -50,12 +50,12 @@ class _SettingsState extends State<Settings> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _setParticipant,
-              child: Text('Ввести'),
+              child: const Text('Ввести'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _getParticipant,
-              child: Text('Получить'),
+              child: const Text('Получить'),
             ),
             const SizedBox(height: 20),
             _getParticipantInfo(),
@@ -71,14 +71,14 @@ class _SettingsState extends State<Settings> {
         Expanded(
           child: TextField(
             controller: _nameController,
-            decoration: InputDecoration(hintText: 'Имя'),
+            decoration: const InputDecoration(hintText: 'Имя'),
           ),
         ),
         const SizedBox(width: 20),
         Expanded(
           child: TextField(
             controller: _surnameController,
-            decoration: InputDecoration(hintText: 'Фамилия'),
+            decoration: const InputDecoration(hintText: 'Фамилия'),
           ),
         ),
         const SizedBox(width: 20),
@@ -87,7 +87,7 @@ class _SettingsState extends State<Settings> {
             controller: _chipController,
             keyboardType: const TextInputType.numberWithOptions(
                 decimal: true, signed: true),
-            decoration: InputDecoration(hintText: 'Номер чипа'),
+            decoration: const InputDecoration(hintText: 'Номер чипа'),
           ),
         ),
       ],
@@ -97,10 +97,11 @@ class _SettingsState extends State<Settings> {
   Widget _getParticipantInfo() {
     return Observer(
       builder: (_) {
-        if (_settingsState.isLoading)
-          return Center(
+        if (_settingsState.isLoading) {
+          return const Center(
             child: CircularProgressIndicator(),
           );
+        }
         if (_settingsState.isGeted == false) return Container();
 
         return Column(

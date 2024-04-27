@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'widget/scanner.dart';
+import 'widgets/scanner.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -57,7 +57,7 @@ class _HomeState extends State<Home> {
                   },
                 ),
               ]),
-              Expanded(child: Scanner()),
+              const Expanded(child: Scanner()),
             ]),
       ),
     );

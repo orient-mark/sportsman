@@ -28,7 +28,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   Barcode? _barcode;
   DateTime? _time;
   StreamSubscription<Object?>? _subscription;
-  String _start = "0";
+  final String _start = "0";
 
   @override
   void initState() {
