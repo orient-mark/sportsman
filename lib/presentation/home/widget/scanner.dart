@@ -3,9 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:sportsman/domain/state/home/scanner_state.dart';
-import 'package:sportsman/internal/dependencies/view/home/scanner_module.dart';
-import 'package:sportsman/presentation/home/widget/scanner_button_widgets.dart';
+
+import '../../../domain/state/home/scanner_state.dart';
+import '../../../internal/dependencies/view/home/scanner_module.dart';
+import 'scanner_button_widgets.dart';
 
 class Scanner extends StatefulWidget {
   const Scanner({super.key});

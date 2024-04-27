@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sportsman/presentation/home/widget/scanner.dart';
+
+import 'widget/scanner.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
