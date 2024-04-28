@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sportsman/presentation/result/result.dart';
-import 'package:sportsman/presentation/settings/settings.dart';
-import 'package:sportsman/presentation/home/home.dart';
+
+import '../presentation/home/home.dart';
+import '../presentation/result/result.dart';
+import '../presentation/settings/settings.dart';
 
 class Application extends StatelessWidget {
   const Application({super.key});
