@@ -69,7 +69,7 @@ class LocalService {
     }
   }
 
-  /// Записать данные сплита в файл
+  /// Записать данные отметки в сплит
   Future setCheckpoint(Map map) async {
     final contents = await _readFile(_pathCheckpoints);
     late List<dynamic> dataList;
