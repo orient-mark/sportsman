@@ -49,4 +49,13 @@ class ApiUtil {
   Future deleteCheckpoints() async {
     await _localService.deleteCheckpoints();
   }
+
+  Future<String?> getParticipantFullJSON() async {
+    final result = await _localService.getParticipantFullJSON();
+    if (result != null) {
+      return result;
+    } else {
+      return null;
+    }
+  }
 }

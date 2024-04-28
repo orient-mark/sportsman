@@ -35,6 +35,24 @@ class LocalService {
     await file.delete();
   }
 
+  Future<String?> getParticipantFullJSON() async {
+    final participantInfo = await _readFile(_pathParticipant);
+    if (participantInfo.isNotEmpty) {
+      final participantData = await _readFile(_pathCheckpoints);
+      if (participantData.isNotEmpty) {
+        final Map<String, dynamic> map = jsonDecode(participantInfo);
+        final dataList = jsonDecode(participantData);
+        final Map<String, dynamic> split = {'split': dataList};
+        map.addAll(split);
+        return jsonEncode(map);
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
   Future<ApiParticipant?> getParticipant() async {
     final contents = await _readFile(_pathParticipant);
     if (contents.isNotEmpty) {
