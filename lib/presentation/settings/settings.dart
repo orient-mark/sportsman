@@ -23,6 +23,7 @@ class _SettingsState extends State<Settings> {
   void initState() {
     super.initState();
     _settingsState = SettingsModule.settingsState();
+    _getParticipant();
   }
 
   @override
@@ -102,7 +103,7 @@ class _SettingsState extends State<Settings> {
             child: CircularProgressIndicator(),
           );
         }
-        if (_settingsState.isGeted == false) return Container();
+        if (_settingsState.isGeted == false) return const Text('Нет данных');
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
