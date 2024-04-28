@@ -35,6 +35,7 @@ class LocalService {
     await file.delete();
   }
 
+  ///TODO get null
   Future<ApiParticipant> getParticipant() async {
     final contents = await _readFile(_pathParticipant);
     final map = jsonDecode(contents);
