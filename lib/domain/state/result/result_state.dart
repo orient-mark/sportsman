@@ -1,7 +1,5 @@
 import 'package:mobx/mobx.dart';
 
-import '../../model/participant.dart';
-import '../../repository/checkpoint_repository.dart';
 import '../../repository/participant_repository.dart';
 
 part 'result_state.g.dart';
@@ -9,13 +7,12 @@ part 'result_state.g.dart';
 class ResultState = ResultStateBase with _$ResultState;
 
 abstract class ResultStateBase with Store {
-  ResultStateBase(this._participantRepository, this._checkpointRepository);
+  ResultStateBase(this._participantRepository);
 
   final ParticipantRepository _participantRepository;
-  final CheckpointRepository _checkpointRepository;
 
   @observable
-  late Participant participant;
+  late String split;
 
   @observable
   bool isLoading = false;
@@ -25,15 +22,10 @@ abstract class ResultStateBase with Store {
   @action
   Future<void> getResult() async {
     isLoading = true;
-    final data = await _participantRepository.getParticipant();
-
+    final data = await _participantRepository.getParticipantFullJSON();
     if (data != null) {
-      participant = data;
-      final split = await _checkpointRepository.getCheckpoints();
-      if (split != null) {
-        participant.split = split;
-        isGeted = true;
-      }
+      split = data;
+      isGeted = true;
     }
     isLoading = false;
   }

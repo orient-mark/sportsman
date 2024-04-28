@@ -5,7 +5,6 @@ class ResultModule {
   static ResultState resultState() {
     return ResultState(
       RepositoryModule.participantRepository(),
-      RepositoryModule.checkpointRepository(),
     );
   }
 }
