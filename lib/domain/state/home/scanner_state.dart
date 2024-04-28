@@ -33,7 +33,7 @@ abstract class ScannerStateBase with Store {
   }
 
   @action
-  Future<void> setCheckpoint(String info, int time) async {
+  Future<void> setCheckpoint(String info, DateTime time) async {
     await _checkpointRepository
         .setCheckpoint(Checkpoint(info: info, time: time));
   }

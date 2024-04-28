@@ -26,7 +26,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   );
 
   Barcode? _barcode;
-  DateTime? _time;
+  late DateTime _time;
   StreamSubscription<Object?>? _subscription;
   final String _start = "0";
 
@@ -99,7 +99,6 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
     );
   }
 
-  //TODO Уведомление о получение QR
   Widget _buildBarcode(Barcode? value) {
     if (value == null) {
       return const Align(
@@ -110,7 +109,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
         ),
       );
     }
-    _getCheckpoint();
+
     return Align(
       alignment: Alignment.bottomCenter,
       child: Observer(
@@ -122,7 +121,8 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
           }
           if (_scannerState.isGeted == false) return Container();
 
-          return _dialog(_scannerState.checkpoint.info);
+          return _dialog(
+              '${_scannerState.checkpoint.info} time: ${_scannerState.checkpoint.time.toString()}');
         },
       ),
     );
@@ -163,14 +163,10 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
     controller.dispose();
   }
 
-  ///TODO передать время [_time]
-  void _setCheckpoint() {
-    String info = _barcode!.displayValue!;
-    const time = 0;
-    _scannerState.setCheckpoint(info, time);
-  }
-
-  void _getCheckpoint() {
+  void _setCheckpoint() async {
+    var info = _barcode!.displayValue!;
+    var time = _time;
+    await _scannerState.setCheckpoint(info, time);
     _scannerState.getCheckpoint();
   }
 
