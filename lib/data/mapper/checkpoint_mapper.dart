@@ -5,7 +5,7 @@ class CheckpointMapper {
   static Checkpoint _fromApi(ApiCheckpoint checkpoint) {
     return Checkpoint(
       info: checkpoint.info.toString(),
-      time: checkpoint.time.toInt(),
+      time: DateTime.parse(checkpoint.time),
     );
   }
 
@@ -23,6 +23,6 @@ class CheckpointMapper {
 
   static Map toApi(Checkpoint checkpoint) => {
         'info': checkpoint.info,
-        'time': checkpoint.time,
+        'time': checkpoint.time.toIso8601String(),
       };
 }

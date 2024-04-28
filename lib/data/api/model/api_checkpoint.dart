@@ -2,10 +2,10 @@
 /// Время отмеки [time]
 class ApiCheckpoint {
   final String _info;
-  final num _time;
+  final String _time;
 
   String get info => _info;
-  num get time => _time;
+  String get time => _time;
 
   ApiCheckpoint.fromApi(Map<String, dynamic> json)
       : _info = json['info'],
