@@ -23,18 +23,23 @@ abstract class SettingsStateBase with Store {
 
   @action
   Future<void> getParticipant() async {
+    isGeted = false;
     isLoading = true;
     final data = await _participantRepository.getParticipant();
-    participant = data;
-    isGeted = true;
+    if (data != null) {
+      participant = data;
+      isGeted = true;
+    } else {
+      isGeted = false;
+    }
     isLoading = false;
   }
 
   @action
   Future<void> setParticipant(String name, String surname, int chip) async {
     isLoading = true;
-    participant = Participant(name: name, surname: surname, chip: chip);
-    await _participantRepository.setParticipant(participant);
+    await _participantRepository
+        .setParticipant(Participant(name: name, surname: surname, chip: chip));
     isGeted = false;
     isLoading = false;
   }

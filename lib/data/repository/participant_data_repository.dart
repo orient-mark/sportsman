@@ -8,7 +8,7 @@ class ParticipantDataRepository extends ParticipantRepository {
   ParticipantDataRepository(this._apiUtil);
 
   @override
-  Future<Participant> getParticipant() {
+  Future<Participant?> getParticipant() {
     return _apiUtil.getParticipant();
   }
 

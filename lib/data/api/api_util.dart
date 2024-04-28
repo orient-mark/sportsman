@@ -9,9 +9,13 @@ class ApiUtil {
 
   ApiUtil(this._localService);
 
-  Future<Participant> getParticipant() async {
+  Future<Participant?> getParticipant() async {
     final result = await _localService.getParticipant();
-    return ParticipantMapper.fromApi(result);
+    if (result != null) {
+      return ParticipantMapper.fromApi(result);
+    } else {
+      return null;
+    }
   }
 
   Future setParticipant(Participant participant) async {
