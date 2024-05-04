@@ -146,8 +146,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
           if (_barcode!.displayValue != _start) {
             _setCheckpoint();
           } else {
-            _deleteCheckpoints();
-            _barcode = null;
+            _checkpointStart();
           }
         }
       });
@@ -170,7 +169,10 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
     _scannerState.getCheckpoint();
   }
 
-  void _deleteCheckpoints() {
-    _scannerState.deleteCheckpoints();
+  void _checkpointStart() async {
+    var info = _barcode!.displayValue!;
+    var time = _time;
+    await _scannerState.deleteCheckpoints();
+    _scannerState.setCheckpoint(info, time);
   }
 }
