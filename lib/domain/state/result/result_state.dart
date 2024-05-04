@@ -12,7 +12,7 @@ abstract class ResultStateBase with Store {
   final ParticipantRepository _participantRepository;
 
   @observable
-  late String split;
+  late String result;
 
   @observable
   bool isLoading = false;
@@ -21,10 +21,11 @@ abstract class ResultStateBase with Store {
 
   @action
   Future<void> getResult() async {
+    isGeted = false;
     isLoading = true;
-    final data = await _participantRepository.getParticipantFullJSON();
+    final data = await _participantRepository.getResult();
     if (data != null) {
-      split = data;
+      result = data;
       isGeted = true;
     }
     isLoading = false;
