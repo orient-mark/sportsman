@@ -1,4 +1,5 @@
 import 'package:mobx/mobx.dart';
+import 'package:sportsman/domain/model/participant.dart';
 
 import '../../repository/participant_repository.dart';
 
@@ -12,7 +13,7 @@ abstract class ResultStateBase with Store {
   final ParticipantRepository _participantRepository;
 
   @observable
-  late String result;
+  late Participant participant;
 
   @observable
   bool isLoading = false;
@@ -23,9 +24,9 @@ abstract class ResultStateBase with Store {
   Future<void> getResult() async {
     isGeted = false;
     isLoading = true;
-    final data = await _participantRepository.getResult();
+    final data = await _participantRepository.getResultParticipant();
     if (data != null) {
-      result = data;
+      participant = data;
       isGeted = true;
     }
     isLoading = false;
