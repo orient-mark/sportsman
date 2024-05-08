@@ -6,53 +6,46 @@ import 'package:path_provider/path_provider.dart';
 import '../model/api_checkpoint.dart';
 import '../model/api_participant.dart';
 
+/// Работает файлами устройства пользователя
 class LocalService {
+  /// Путь к файлу спорсмена
   final String _pathParticipant = 'data/participant.json';
+
+  /// Путь к файлу сплита
   final String _pathCheckpoints = 'data/checkpoints.json';
+
+  /// Получаем файл из файловой системы по адресу [путь].
+  ///
+  /// Если файла нет, то происходит его запись.
+  Future<File> _getFile(String path) async {
+    final pathDirectory = await _pathApplicationDirectory;
+    return await File('$pathDirectory/$path').create(recursive: true);
+  }
 
   Future<String> get _pathApplicationDirectory async {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
   }
 
-  Future<File> _getFile(String path) async {
-    final pathDirectory = await _pathApplicationDirectory;
-    return await File('$pathDirectory/$path').create(recursive: true);
-  }
-
+  /// Перезаписываем содержание файла по адресу [путь].
   Future _writeFile(String path, String contents) async {
     final file = await _getFile(path);
     await file.writeAsString(contents);
   }
 
+  /// Получаем содержание файла по адресу [путь].
   Future<String> _readFile(String path) async {
     final file = await _getFile(path);
     return await file.readAsString();
   }
 
+  /// Удаляет файл из файловой системы по адресу [путь].
   Future _deleteFile(String path) async {
     final file = await _getFile(path);
     await file.delete();
   }
 
-  Future<String?> getParticipantFullJSON() async {
-    final participantInfo = await _readFile(_pathParticipant);
-    if (participantInfo.isNotEmpty) {
-      final participantData = await _readFile(_pathCheckpoints);
-      if (participantData.isNotEmpty) {
-        final Map<String, dynamic> map = jsonDecode(participantInfo);
-        final dataList = jsonDecode(participantData);
-        final Map<String, dynamic> split = {'split': dataList};
-        map.addAll(split);
-        return jsonEncode(map);
-      } else {
-        return null;
-      }
-    } else {
-      return null;
-    }
-  }
-
+  /// Вывод информации о пользоватлее (без сплита).
   Future<ApiParticipant?> getParticipant() async {
     final contents = await _readFile(_pathParticipant);
     if (contents.isNotEmpty) {
@@ -63,12 +56,13 @@ class LocalService {
     }
   }
 
+  /// Ввод информации о пользователе (без сплита).
   Future setParticipant(Map map) async {
     final contents = jsonEncode(map);
     await _writeFile(_pathParticipant, contents);
   }
 
-  /// Получение сплита состоящего из Checkpoints
+  /// Получение сплита состоящего из Checkpoints.
   Future<List<ApiCheckpoint>?> getCheckpoints() async {
     final contents = await _readFile(_pathCheckpoints);
     if (contents.isNotEmpty) {
@@ -79,7 +73,7 @@ class LocalService {
     }
   }
 
-  /// Получение последнего загруженого Checkpoints
+  /// Получение последнего загруженого Checkpoints.
   Future<ApiCheckpoint?> getCheckpoint() async {
     final contents = await _readFile(_pathCheckpoints);
     if (contents.isNotEmpty) {
@@ -90,7 +84,7 @@ class LocalService {
     }
   }
 
-  /// Записать данные отметки в сплит
+  /// Записать данные отметки в сплит.
   Future setCheckpoint(Map map) async {
     final contents = await _readFile(_pathCheckpoints);
     late List<dynamic> dataList;
@@ -104,7 +98,7 @@ class LocalService {
     await _writeFile(_pathCheckpoints, content);
   }
 
-  /// Очистить данные сплита
+  /// Очистить данные сплита.
   Future deleteCheckpoints() async {
     await _deleteFile(_pathCheckpoints);
   }
