@@ -50,10 +50,17 @@ class ApiUtil {
     await _localService.deleteCheckpoints();
   }
 
-  Future<String?> getParticipantFullJSON() async {
-    final result = await _localService.getParticipantFullJSON();
+  Future<Participant?> getParticipantAndSlpit() async {
+    final result = await _localService.getParticipant();
     if (result != null) {
-      return result;
+      final split = await _localService.getCheckpoints();
+      if (split != null) {
+        final participant = ParticipantMapper.fromApi(result);
+        participant.split = CheckpointMapper.listFromApi(split);
+        return participant;
+      } else {
+        return null;
+      }
     } else {
       return null;
     }
