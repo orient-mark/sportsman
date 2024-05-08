@@ -18,7 +18,7 @@ class ParticipantDataRepository extends ParticipantRepository {
   }
 
   @override
-  Future<String?> getParticipantFullJSON() {
-    return _apiUtil.getParticipantFullJSON();
+  Future<Participant?> getResultParticipant() {
+    return _apiUtil.getParticipantAndSlpit();
   }
 }

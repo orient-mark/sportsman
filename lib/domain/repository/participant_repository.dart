@@ -1,7 +1,7 @@
 import 'package:sportsman/domain/model/participant.dart';
 
 abstract class ParticipantRepository {
-  Future<String?> getResult();
+  Future<Participant?> getResultParticipant();
 
   Future<Participant?> getParticipant();
 
