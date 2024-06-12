@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
+import 'package:sportsman/data/api/model/api_split.dart';
 
 import '../model/api_checkpoint.dart';
 import '../model/api_participant.dart';
@@ -14,6 +15,9 @@ class LocalService {
   final String _pathParticipant = 'data/participant.json';
 
   /// Путь к файлу сплита
+  final String _pathSplit = 'data/split.json';
+
+  /// Путь к файлу отметок
   final String _pathCheckpoints = 'data/checkpoints.json';
 
   /// Получаем файл из файловой системы по адресу [путь].
@@ -47,6 +51,7 @@ class LocalService {
     await file.delete();
   }
   //#endregion
+
   //#region Пользователь
 
   /// Вывод информации о пользоватлее (без сплита).
@@ -67,7 +72,6 @@ class LocalService {
   }
   //#endregion
 
-  /// Получение сплита состоящего из Checkpoints.
   //#region Отметка
 
   /// Получение списка отметок Checkpoints.
@@ -92,7 +96,6 @@ class LocalService {
     }
   }
 
-  /// Записать данные отметки в сплит.
   /// Записать данные отметки в список.
   Future setCheckpoint(Map map) async {
     final contents = await _readFile(_pathCheckpoints);
@@ -107,9 +110,32 @@ class LocalService {
     await _writeFile(_pathCheckpoints, content);
   }
 
-  /// Очистить данные сплита.
   /// Очистить данные списка отметок.
   Future deleteCheckpoints() async {
     await _deleteFile(_pathCheckpoints);
   }
+  //#endregion
+
+  //#region Сплитф
+
+  /// Получение данных [ApiSplit].
+  ///
+  /// [ApiSplit.startTime] может быть равен `null`.
+  /// [ApiSplit.finishTime] может быть равен `null`.
+  Future<ApiSplit?> getSplit() async {
+    final contents = await _readFile(_pathSplit);
+    if (contents.isNotEmpty) {
+      final map = jsonDecode(contents);
+      return ApiSplit.fromApi(map);
+    } else {
+      return null;
+    }
+  }
+
+  Future setSplit(Map map) async {
+    final contents = jsonEncode(map);
+    await _writeFile(_pathSplit, contents);
+  }
+
+  //#endregion
 }
