@@ -26,6 +26,21 @@ class ApiUtil {
   }
 
   //#endregion
+  //#region Сплит
+  Future<Split?> getSplit() async {
+    final result = await _localService.getSplit();
+    if (result != null) {
+      return SplitMapper.fromApi(result);
+    } else {
+      return null;
+    }
+  }
+  Future setSplit(Split split) async {
+    final map = SplitMapper.toApi(split);
+    await _localService.setSplit(map);
+  }
+  //#endregion
+
   //#region Отметка
 
   Future<List<Checkpoint>?> getCheckpoints() async {
