@@ -8,6 +8,8 @@ import '../model/api_participant.dart';
 
 /// Работает файлами устройства пользователя
 class LocalService {
+  //#region Файлы
+
   /// Путь к файлу спорсмена
   final String _pathParticipant = 'data/participant.json';
 
@@ -44,6 +46,8 @@ class LocalService {
     final file = await _getFile(path);
     await file.delete();
   }
+  //#endregion
+  //#region Пользователь
 
   /// Вывод информации о пользоватлее (без сплита).
   Future<ApiParticipant?> getParticipant() async {
@@ -61,8 +65,12 @@ class LocalService {
     final contents = jsonEncode(map);
     await _writeFile(_pathParticipant, contents);
   }
+  //#endregion
 
   /// Получение сплита состоящего из Checkpoints.
+  //#region Отметка
+
+  /// Получение списка отметок Checkpoints.
   Future<List<ApiCheckpoint>?> getCheckpoints() async {
     final contents = await _readFile(_pathCheckpoints);
     if (contents.isNotEmpty) {
@@ -85,6 +93,7 @@ class LocalService {
   }
 
   /// Записать данные отметки в сплит.
+  /// Записать данные отметки в список.
   Future setCheckpoint(Map map) async {
     final contents = await _readFile(_pathCheckpoints);
     late List<dynamic> dataList;
@@ -99,6 +108,7 @@ class LocalService {
   }
 
   /// Очистить данные сплита.
+  /// Очистить данные списка отметок.
   Future deleteCheckpoints() async {
     await _deleteFile(_pathCheckpoints);
   }

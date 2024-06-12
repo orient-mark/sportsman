@@ -9,6 +9,8 @@ class ApiUtil {
 
   ApiUtil(this._localService);
 
+  //#region Пользователь
+
   Future<Participant?> getParticipant() async {
     final result = await _localService.getParticipant();
     if (result != null) {
@@ -22,6 +24,9 @@ class ApiUtil {
     final map = ParticipantMapper.toApi(participant);
     await _localService.setParticipant(map);
   }
+
+  //#endregion
+  //#region Отметка
 
   Future<List<Checkpoint>?> getCheckpoints() async {
     final result = await _localService.getCheckpoints();
@@ -65,4 +70,5 @@ class ApiUtil {
       return null;
     }
   }
+  //#endregion
 }
