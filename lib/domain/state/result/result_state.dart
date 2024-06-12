@@ -40,6 +40,7 @@ abstract class ResultStateBase with Store {
   @observable
   bool isFinished = false;
 
+  /// Добавляем по размеру [stepSize]
   @action
   Future<void> getResult() async {
     isFinished = false;
@@ -79,11 +80,14 @@ abstract class ResultStateBase with Store {
       var kyeTime = startTime ?? finishTime;
 
       for (int i = 0; i < marks.length; i++) {
+        // Добавляем по размеру [stepSize]
         if (i > 0 && (i % stepSize) == 0) {
           participantResult.add(jsonEncode(listMap));
           listMap.clear();
         }
 
+        // Если время от старта, то положительное будет
+        // иначе отрицательное.
         var deltaTime = marks[i].time.difference(kyeTime);
 
         listMap.add({marks[i].info: deltaTime.inMilliseconds});
