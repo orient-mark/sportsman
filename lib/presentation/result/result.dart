@@ -117,15 +117,33 @@ class _ResultState extends State<Result> {
         if (_resultState.isGeted == false) {
           return const Center(child: Text('Нет данных'));
         } else {
-          return Column(
-            children: [
-              QrWidget(data: _resultState.result),
-              Text(_resultState.result),
-            ],
+          if (_resultState.isFinished == false) {
+            return const Center(child: Text('Нет ФИНИША'));
+          } else {
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text("Участник: ${_resultState.participantName}"),
+                        Text("Чип: ${_resultState.participantChip}"),
+                      ],
+                    ),
+                  ),
+                  QrWidget(data: _resultState.participantJSON),
+                ],
+              ),
             );
+          }
         }
+      },
     );
   }
+
   Widget _getQRsplit() {
     return Observer(
       builder: (_) {
@@ -137,9 +155,32 @@ class _ResultState extends State<Result> {
         if (_resultState.isGeted == false) {
           return const Center(child: Text('Нет данных'));
         } else {
+          if (_resultState.isFinished == false) {
+            return const Center(child: Text('Нет ФИНИША'));
+          } else {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _resultState.participantResult.length,
+                  itemBuilder: (_, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Text("${index + 1}-я часть сплита"),
+                          ),
+                          QrWidget(data: _resultState.participantResult[index]),
+                        ],
+                      ),
+                    );
+                  }),
             );
+          }
+        }
       },
     );
   }
