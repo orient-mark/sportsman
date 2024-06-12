@@ -1,10 +1,10 @@
-import 'package:sportsman/domain/model/checkpoint.dart';
+import 'split.dart';
 
 class Participant {
   final String name;
   final String surname;
   final int chip;
-  List<Checkpoint>? split;
+  Split? split;
 
   Participant({
     required this.name,
