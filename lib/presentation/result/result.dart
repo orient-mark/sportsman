@@ -167,13 +167,17 @@ class _ResultState extends State<Result> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 32.0),
                       child: Column(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8.0),
                             child: Text("${index + 1}-я часть сплита"),
                           ),
-                          QrWidget(data: _resultState.participantResult[index]),
+                          QrWidget(
+                            data:
+                                "$index${_resultState.participantResult[index]}",
+                          ),
                         ],
                       ),
                     );
