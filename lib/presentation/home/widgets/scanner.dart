@@ -20,7 +20,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
 
   final MobileScannerController controller = MobileScannerController(
     detectionSpeed: DetectionSpeed.noDuplicates,
-    facing: CameraFacing.front,
+    facing: CameraFacing.back,
     useNewCameraSelector: true,
     detectionTimeoutMs: 1000,
   );
@@ -28,7 +28,9 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   Barcode? _barcode;
   late DateTime _time;
   StreamSubscription<Object?>? _subscription;
-  final String _start = "0";
+  static const String _start = "start";
+  static const String _finish = "finish";
+  static const String _clear = "clear";
 
   @override
   void initState() {
@@ -110,22 +112,43 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
       );
     }
 
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Observer(
-        builder: (_) {
-          if (_scannerState.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
+    return Observer(builder: (_) {
+      if (_scannerState.isLoading) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+      if (_scannerState.isGeted == false) {
+        switch (_barcode!.displayValue) {
+          case _start:
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: _dialog("Старт"),
             );
-          }
-          if (_scannerState.isGeted == false) return Container();
+          case _finish:
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: _dialog("Финиш"),
+            );
+          case _clear:
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: _dialog("Очистка"),
+            );
+          default:
+            return Align(
+              alignment: Alignment.bottomCenter,
+              child: _dialog("Не системный QR"),
+            );
+        }
+      }
 
-          return _dialog(
-              '${_scannerState.checkpoint.info} time: ${_scannerState.checkpoint.time.toString()}');
-        },
-      ),
-    );
+      return Align(
+        alignment: Alignment.bottomCenter,
+        child: _dialog(
+            '${_scannerState.checkpoint.info} time: ${_scannerState.checkpoint.time.toString()}'),
+      );
+    });
   }
 
   Widget _dialog(String? message) {
@@ -143,10 +166,18 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
         _barcode = barcodes.barcodes.firstOrNull;
 
         if (_barcode!.displayValue != null) {
-          if (_barcode!.displayValue != _start) {
-            _setCheckpoint();
-          } else {
-            _checkpointStart();
+          switch (_barcode!.displayValue) {
+            case _start:
+              _checkpointStart(_time);
+              break;
+            case _finish:
+              _checkpointFinish(_time);
+              break;
+            case _clear:
+              _clearCheckpoints();
+              break;
+            default:
+              _setCheckpoint();
           }
         }
       });
@@ -169,10 +200,15 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
     _scannerState.getCheckpoint();
   }
 
-  void _checkpointStart() async {
-    var info = _barcode!.displayValue!;
-    var time = _time;
-    await _scannerState.deleteCheckpoints();
-    _scannerState.setCheckpoint(info, time);
+  void _checkpointStart(DateTime time) async {
+    await _scannerState.setSplitStart(time);
+  }
+
+  void _checkpointFinish(DateTime time) async {
+    await _scannerState.setSplitFinish(time);
+  }
+
+  void _clearCheckpoints() async {
+    await _scannerState.clearSlplit();
   }
 }
