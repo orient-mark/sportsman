@@ -5,6 +5,7 @@ class ScannerModule {
   static ScannerState scannerState() {
     return ScannerState(
       RepositoryModule.checkpointRepository(),
+      RepositoryModule.splitRepository(),
     );
   }
 }
