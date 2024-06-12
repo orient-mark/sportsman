@@ -34,21 +34,98 @@ class _ResultState extends State<Result> {
     );
   }
 
+  String titleTab = "QR Участника";
+  int currentTab = 0;
+  final PageStorageBucket _bucket = PageStorageBucket();
+
   Widget _getBody() {
+    final List<Widget> pages = <Widget>[
+      _getQRSporsman(),
+      Expanded(
+        child: _getQRsplit(),
+      ),
+    ];
+
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Header(context: context, title: "QR Сплита"),
-            _getQRsplit(),
+            Header(context: context, title: titleTab),
+            Expanded(
+              child: PageStorage(
+                bucket: _bucket,
+                child: pages[currentTab],
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Column(
+                  children: [
+                    IconButton(
+                      color: currentTab == 0 ? Colors.orange : Colors.black,
+                      isSelected: currentTab == 0,
+                      icon: const Icon(Icons.accessibility_rounded),
+                      selectedIcon: const Icon(Icons.accessibility_new_rounded),
+                      onPressed: () {
+                        titleTab = "QR Участника";
+                        navigation(0);
+                      },
+                    ),
+                    const Text("Участник")
+                  ],
+                ),
+                Column(
+                  children: [
+                    IconButton(
+                      color: currentTab == 1 ? Colors.orange : Colors.black,
+                      isSelected: currentTab == 1,
+                      icon: const Icon(Icons.receipt_long_outlined),
+                      selectedIcon: const Icon(Icons.receipt_long),
+                      onPressed: () {
+                        titleTab = "QR Сплита";
+                        navigation(1);
+                      },
+                    ),
+                    const Text("Сплит")
+                  ],
+                ),
+              ],
+            )
           ],
         ),
       ),
     );
   }
 
+  void navigation(int number) {
+    setState(() {
+      currentTab = number;
+    });
+  }
+
+  Widget _getQRSporsman() {
+    return Observer(
+      builder: (_) {
+        if (_resultState.isLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (_resultState.isGeted == false) {
+          return const Center(child: Text('Нет данных'));
+        } else {
+          return Column(
+            children: [
+              QrWidget(data: _resultState.result),
+              Text(_resultState.result),
+            ],
+            );
+        }
+    );
+  }
   Widget _getQRsplit() {
     return Observer(
       builder: (_) {
@@ -58,15 +135,11 @@ class _ResultState extends State<Result> {
           );
         }
         if (_resultState.isGeted == false) {
-          return const Text('Нет данных');
+          return const Center(child: Text('Нет данных'));
         } else {
-          return Column(
-            children: [
-              QrWidget(data: _resultState.result),
-              Text(_resultState.result),
-            ],
-          );
-        }
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+            );
       },
     );
   }
