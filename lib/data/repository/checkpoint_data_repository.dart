@@ -8,11 +8,6 @@ class CheckpointDataRepository extends CheckpointRepository {
   CheckpointDataRepository(this._apiUtil);
 
   @override
-  Future<List<Checkpoint>?> getCheckpoints() {
-    return _apiUtil.getCheckpoints();
-  }
-
-  @override
   Future<Checkpoint?> getCheckpoint() {
     return _apiUtil.getCheckpoint();
   }
