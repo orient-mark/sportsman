@@ -130,7 +130,14 @@ class _SettingsState extends State<Settings> {
       context: context,
       builder: (BuildContext context) {
         return Dialog.fullscreen(
-          child: Scanner(controller: scannerController),
+          child: Column(
+            children: [
+              Header(context: context, title: 'Отсканируй QR'),
+              Expanded(
+                child: Scanner(controller: scannerController),
+              ),
+            ],
+          ),
         );
       },
     );
