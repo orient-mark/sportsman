@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-import 'widgets/scanner.dart';
+import 'package:flutter/material.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:sportsman/presentation/widgets/scanner/scanner.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -10,6 +12,13 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final MobileScannerController scannerController = MobileScannerController(
+    detectionSpeed: DetectionSpeed.noDuplicates,
+    facing: CameraFacing.front,
+    useNewCameraSelector: true,
+    detectionTimeoutMs: 1000,
+  );
+
   @override
   void initState() {
     super.initState();
@@ -52,12 +61,15 @@ class _HomeState extends State<Home> {
                   color: Colors.black,
                   iconSize: 32.0,
                   icon: const Icon(Icons.settings),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/settings');
+                  onPressed: () async {
+                    scannerController.stop();
+                    await Navigator.pushNamed(context, '/settings');
+                    if (!context.mounted) return;
+                    unawaited(scannerController.start());
                   },
                 ),
               ]),
-              const Expanded(child: Scanner()),
+              Expanded(child: Scanner(controller: scannerController)),
             ]),
       ),
     );

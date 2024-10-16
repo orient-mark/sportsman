@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:sportsman/presentation/widgets/scanner/scanner.dart';
 
 import '../../domain/state/settings/settings_state.dart';
 import '../../internal/dependencies/view/settings_module.dart';
@@ -50,8 +52,8 @@ class _SettingsState extends State<Settings> {
             _getRowInput(),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _setParticipant,
-              child: const Text('Ввести'),
+              onPressed: _showScanner,
+              child: const Text('Ввести данные пользователя'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -112,6 +114,24 @@ class _SettingsState extends State<Settings> {
             Text('Фамилия: ${_settingsState.participant.surname}'),
             Text('Чип: ${_settingsState.participant.chip}'),
           ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showScanner() async {
+    final MobileScannerController scannerController = MobileScannerController(
+      detectionSpeed: DetectionSpeed.noDuplicates,
+      facing: CameraFacing.back,
+      useNewCameraSelector: true,
+      detectionTimeoutMs: 1000,
+    );
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog.fullscreen(
+          child: Scanner(controller: scannerController),
         );
       },
     );
