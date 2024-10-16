@@ -92,7 +92,6 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
           children: [
             ToggleFlashlightButton(controller: _controller),
             StartStopMobileScannerButton(controller: _controller),
-            SwitchCameraButton(controller: _controller),
           ],
         )
       ],

@@ -122,7 +122,6 @@ class _SettingsState extends State<Settings> {
   Future<void> _showScanner() async {
     final MobileScannerController scannerController = MobileScannerController(
       detectionSpeed: DetectionSpeed.noDuplicates,
-      facing: CameraFacing.back,
       useNewCameraSelector: true,
       detectionTimeoutMs: 1000,
     );

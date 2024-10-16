@@ -14,7 +14,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final MobileScannerController scannerController = MobileScannerController(
     detectionSpeed: DetectionSpeed.noDuplicates,
-    facing: CameraFacing.front,
     useNewCameraSelector: true,
     detectionTimeoutMs: 1000,
   );
