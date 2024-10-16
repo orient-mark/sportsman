@@ -97,7 +97,9 @@ class _SettingsState extends State<Settings> {
                     TextField(
                       controller: _chipController,
                       keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true, signed: true),
+                        decimal: true,
+                        signed: true,
+                      ),
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16.0),
@@ -143,13 +145,18 @@ class _SettingsState extends State<Settings> {
       context: context,
       builder: (BuildContext context) {
         return Dialog.fullscreen(
-          child: Column(
-            children: [
-              Header(context: context, title: 'Отсканируй QR'),
-              Expanded(
-                child: Scanner(controller: scannerController),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                Header(context: context, title: 'Отсканируй QR'),
+                Expanded(
+                  child: Scanner(
+                    controller: scannerController,
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
