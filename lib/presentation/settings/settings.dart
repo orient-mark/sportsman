@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -20,6 +22,7 @@ class _SettingsState extends State<Settings> {
   bool enabled = false;
 
   late SettingsState settingsState;
+  Barcode? barcode;
 
   @override
   void initState() {
@@ -153,6 +156,24 @@ class _SettingsState extends State<Settings> {
                 Expanded(
                   child: Scanner(
                     controller: scannerController,
+                    handleBarcode: (BarcodeCapture barcodes) {
+                      if (mounted) {
+                        setState(() {
+                          barcode = barcodes.barcodes.firstOrNull;
+
+                          if (barcode!.displayValue != null) {
+                            String str = barcode!.displayValue!;
+                            final data = jsonDecode(str);
+
+                            final name = data['name'];
+                            final surname = data['surname'];
+                            final chip = int.parse(data['chip'].toString());
+
+                            settingsState.setParticipant(name, surname, chip);
+                          }
+                        });
+                      }
+                    },
                   ),
                 ),
               ],
@@ -161,15 +182,5 @@ class _SettingsState extends State<Settings> {
         );
       },
     );
-  }
-
-  void handleBarcode(BarcodeCapture barcodes) {
-
-  void _setParticipant() {
-    // здесь отправляем данные
-    final name = _nameController.text;
-    final surname = _surnameController.text;
-    final chip = int.parse(_chipController.text);
-    _settingsState.setParticipant(name, surname, chip);
   }
 }

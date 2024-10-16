@@ -6,7 +6,7 @@ import 'package:sportsman/presentation/widgets/scanner/scanner_button_widgets.da
 
 class Scanner extends StatefulWidget {
   final MobileScannerController controller;
-  final Function(BarcodeCapture event)? handleBarcode;
+  final Function(BarcodeCapture barcodeCapture)? handleBarcode;
 
   const Scanner({super.key, required this.controller, this.handleBarcode});
 
