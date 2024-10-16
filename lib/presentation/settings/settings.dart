@@ -14,22 +14,22 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  final _nameController = TextEditingController();
-  final _surnameController = TextEditingController();
-  final _chipController = TextEditingController();
+  final nameController = TextEditingController();
+  final surnameController = TextEditingController();
+  final chipController = TextEditingController();
   bool enabled = false;
 
-  late SettingsState _settingsState;
+  late SettingsState settingsState;
 
   @override
   void initState() {
     super.initState();
-    _settingsState = SettingsModule.settingsState();
+    settingsState = SettingsModule.settingsState();
   }
 
   @override
   Widget build(BuildContext context) {
-    _getParticipant();
+    settingsState.getParticipant();
 
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
@@ -41,7 +41,7 @@ class _SettingsState extends State<Settings> {
               builder: (_) {
                 String resultText;
 
-                if (_settingsState.isLoading) {
+                if (settingsState.isLoading) {
                   return Center(
                     child: Container(
                       color: Colors.white,
@@ -49,17 +49,17 @@ class _SettingsState extends State<Settings> {
                     ),
                   );
                 }
-                if (_settingsState.isGeted == false) {
+                if (settingsState.isGeted == false) {
                   enabled = false;
                   resultText = 'Нет данных о пользователе';
                 } else {
                   enabled = true;
 
                   resultText = 'Данные загружены';
-                  _nameController.text = _settingsState.participant.name;
-                  _surnameController.text = _settingsState.participant.surname;
-                  _chipController.text =
-                      _settingsState.participant.chip.toString();
+                  nameController.text = settingsState.participant.name;
+                  surnameController.text = settingsState.participant.surname;
+                  chipController.text =
+                      settingsState.participant.chip.toString();
                 }
 
                 return Column(
@@ -71,7 +71,7 @@ class _SettingsState extends State<Settings> {
                     ),
                     const SizedBox(height: 20.0),
                     TextField(
-                      controller: _nameController,
+                      controller: nameController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16.0),
@@ -83,7 +83,7 @@ class _SettingsState extends State<Settings> {
                     ),
                     const SizedBox(height: 20.0),
                     TextField(
-                      controller: _surnameController,
+                      controller: surnameController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16.0),
@@ -95,7 +95,7 @@ class _SettingsState extends State<Settings> {
                     ),
                     const SizedBox(height: 20.0),
                     TextField(
-                      controller: _chipController,
+                      controller: chipController,
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                         signed: true,
@@ -111,7 +111,7 @@ class _SettingsState extends State<Settings> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: _showScanner,
+                      onPressed: showScanner,
                       child: const Text('Ввести данные пользователя'),
                     ),
                     Expanded(
@@ -134,7 +134,7 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  Future<void> _showScanner() async {
+  Future<void> showScanner() async {
     final MobileScannerController scannerController = MobileScannerController(
       detectionSpeed: DetectionSpeed.noDuplicates,
       useNewCameraSelector: true,
@@ -163,10 +163,7 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  void _getParticipant() {
-    // здесь получаем данные
-    _settingsState.getParticipant();
-  }
+  void handleBarcode(BarcodeCapture barcodes) {
 
   void _setParticipant() {
     // здесь отправляем данные
