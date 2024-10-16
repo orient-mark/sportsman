@@ -5,10 +5,12 @@ class Header extends StatelessWidget {
     super.key,
     required this.context,
     required this.title,
+    this.result,
   });
 
   final BuildContext context;
   final String title;
+  final dynamic result;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class Header extends StatelessWidget {
             iconSize: 32.0,
             icon: const Icon(Icons.arrow_back_ios_new_rounded),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context, result);
             },
           ),
         ),
