@@ -7,6 +7,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import '../../../domain/state/home/scanner_state.dart';
 import '../../../internal/dependencies/view/home/scanner_module.dart';
 import 'scanner_button_widgets.dart';
+import 'package:sportsman/presentation/widgets/scanner/scanner_button_widgets.dart';
 
 class Scanner extends StatefulWidget {
   const Scanner({super.key});
