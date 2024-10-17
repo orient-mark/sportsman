@@ -84,9 +84,9 @@ class _HomeState extends State<Home> {
                     children: [
                       Scanner(
                         controller: scannerController,
-                        handleBarcode: _handleBarcode,
+                        handleBarcode: handleBarcode,
                       ),
-                      _buildBarcode(barcode),
+                      buildBarcode(barcode),
                     ],
                   ),
                 ),
@@ -98,7 +98,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget _buildBarcode(Barcode? value) {
+  Widget buildBarcode(Barcode? value) {
     if (value == null) {
       return const Align(
         child: Text(
@@ -120,35 +120,35 @@ class _HomeState extends State<Home> {
           case start:
             return Align(
               alignment: Alignment.bottomCenter,
-              child: _dialog("Старт"),
+              child: dialog("Старт"),
             );
           case finish:
             return Align(
               alignment: Alignment.bottomCenter,
-              child: _dialog("Финиш"),
+              child: dialog("Финиш"),
             );
           case clear:
             return Align(
               alignment: Alignment.bottomCenter,
-              child: _dialog("Очистка"),
+              child: dialog("Очистка"),
             );
           default:
             return Align(
               alignment: Alignment.bottomCenter,
-              child: _dialog("Не системный QR"),
+              child: dialog("Не системный QR"),
             );
         }
       }
 
       return Align(
         alignment: Alignment.bottomCenter,
-        child: _dialog(
+        child: dialog(
             '${scannerState.checkpoint.info} time: ${scannerState.checkpoint.time.toString()}'),
       );
     });
   }
 
-  Widget _dialog(String? message) {
+  Widget dialog(String? message) {
     return Text(
       message ?? 'No display value.',
       overflow: TextOverflow.fade,
@@ -156,7 +156,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void _handleBarcode(BarcodeCapture barcodes) {
+  void handleBarcode(BarcodeCapture barcodes) {
     if (mounted) {
       setState(() {
         time = DateTime.timestamp();
@@ -165,37 +165,37 @@ class _HomeState extends State<Home> {
         if (barcode!.displayValue != null) {
           switch (barcode!.displayValue) {
             case start:
-              _checkpointStart(time);
+              checkpointStart(time);
               break;
             case finish:
-              _checkpointFinish(time);
+              checkpointFinish(time);
               break;
             case clear:
-              _clearCheckpoints();
+              clearCheckpoints();
               break;
             default:
-              _setCheckpoint();
+              setCheckpoint();
           }
         }
       });
     }
   }
 
-  void _setCheckpoint() async {
+  void setCheckpoint() async {
     info = barcode!.displayValue!;
     await scannerState.setCheckpoint(info, time);
     scannerState.getCheckpoint();
   }
 
-  void _checkpointStart(DateTime time) async {
+  void checkpointStart(DateTime time) async {
     await scannerState.setSplitStart(time);
   }
 
-  void _checkpointFinish(DateTime time) async {
+  void checkpointFinish(DateTime time) async {
     await scannerState.setSplitFinish(time);
   }
 
-  void _clearCheckpoints() async {
+  void clearCheckpoints() async {
     await scannerState.clearSlplit();
   }
 }
