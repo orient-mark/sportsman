@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:sportsman/domain/state/settings/settings_state.dart';
 import 'package:sportsman/internal/dependencies/view/settings_module.dart';
 import 'package:sportsman/presentation/widgets/header.dart';
@@ -16,13 +15,12 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  late SettingsState settingsState;
+
   final nameController = TextEditingController();
   final surnameController = TextEditingController();
   final chipController = TextEditingController();
-  bool enabled = false;
-
-  late SettingsState settingsState;
-  Barcode? barcode;
+  bool enabledTextFields = false;
 
   @override
   void initState() {
@@ -53,10 +51,10 @@ class _SettingsState extends State<Settings> {
                   );
                 }
                 if (settingsState.isGeted == false) {
-                  enabled = false;
+                  enabledTextFields = false;
                   resultText = 'Нет данных о пользователе';
                 } else {
-                  enabled = true;
+                  enabledTextFields = true;
 
                   resultText = 'Данные загружены';
                   nameController.text = settingsState.participant.name;
@@ -82,7 +80,7 @@ class _SettingsState extends State<Settings> {
                         labelText: 'Имя',
                       ),
                       readOnly: true,
-                      enabled: enabled,
+                      enabled: enabledTextFields,
                     ),
                     const SizedBox(height: 20.0),
                     TextField(
@@ -94,7 +92,7 @@ class _SettingsState extends State<Settings> {
                         labelText: 'Фамилия',
                       ),
                       readOnly: true,
-                      enabled: enabled,
+                      enabled: enabledTextFields,
                     ),
                     const SizedBox(height: 20.0),
                     TextField(
@@ -108,7 +106,7 @@ class _SettingsState extends State<Settings> {
                           borderRadius: BorderRadius.circular(16.0),
                         ),
                         labelText: 'Номер чипа',
-                        enabled: enabled,
+                        enabled: enabledTextFields,
                       ),
                       readOnly: true,
                     ),
@@ -138,12 +136,6 @@ class _SettingsState extends State<Settings> {
   }
 
   Future<void> showScanner() async {
-    final MobileScannerController scannerController = MobileScannerController(
-      detectionSpeed: DetectionSpeed.noDuplicates,
-      useNewCameraSelector: true,
-      detectionTimeoutMs: 1000,
-    );
-
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -155,22 +147,16 @@ class _SettingsState extends State<Settings> {
                 Header(context: context, title: 'Отсканируй QR'),
                 Expanded(
                   child: Scanner(
-                    controller: scannerController,
-                    handleBarcode: (BarcodeCapture barcodes) {
+                    processTheDisplayValue: (String displayValue) {
                       if (mounted) {
                         setState(() {
-                          barcode = barcodes.barcodes.firstOrNull;
+                          final data = jsonDecode(displayValue);
 
-                          if (barcode!.displayValue != null) {
-                            String str = barcode!.displayValue!;
-                            final data = jsonDecode(str);
+                          final name = data['name'];
+                          final surname = data['surname'];
+                          final chip = int.parse(data['chip'].toString());
 
-                            final name = data['name'];
-                            final surname = data['surname'];
-                            final chip = int.parse(data['chip'].toString());
-
-                            settingsState.setParticipant(name, surname, chip);
-                          }
+                          settingsState.setParticipant(name, surname, chip);
                         });
                       }
                     },
