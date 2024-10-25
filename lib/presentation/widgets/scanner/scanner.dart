@@ -5,28 +5,34 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:sportsman/presentation/widgets/scanner/scanner_button_widgets.dart';
 
 class Scanner extends StatefulWidget {
-  final MobileScannerController controller;
-  final Function(BarcodeCapture barcodeCapture)? handleBarcode;
+  final Function(String) processTheDisplayValue;
 
-  const Scanner({super.key, required this.controller, this.handleBarcode});
+  const Scanner({
+    super.key,
+    required this.processTheDisplayValue,
+  });
 
   @override
   State<Scanner> createState() => _ScannerState();
 }
 
 class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
-  late MobileScannerController controller;
+  final MobileScannerController controller = MobileScannerController(
+    detectionSpeed: DetectionSpeed.noDuplicates,
+    useNewCameraSelector: true,
+    detectionTimeoutMs: 1000,
+  );
+  Barcode? barcode;
 
   StreamSubscription<Object?>? subscription;
 
   @override
   void initState() {
     super.initState();
-    controller = widget.controller;
 
     WidgetsBinding.instance.addObserver(this);
 
-    subscription = controller.barcodes.listen(widget.handleBarcode);
+    subscription = controller.barcodes.listen(onData);
 
     unawaited(controller.start());
   }
@@ -43,7 +49,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
       case AppLifecycleState.paused:
         return;
       case AppLifecycleState.resumed:
-        subscription = controller.barcodes.listen(widget.handleBarcode);
+        subscription = controller.barcodes.listen(onData);
 
         unawaited(controller.start());
       case AppLifecycleState.inactive:
@@ -81,5 +87,17 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
     subscription = null;
     super.dispose();
     await controller.dispose();
+  }
+
+  void Function(BarcodeCapture)? onData(BarcodeCapture barcodes) {
+    {
+      barcode = barcodes.barcodes.firstOrNull;
+
+      if (barcode!.displayValue!.isNotEmpty) {
+        widget.processTheDisplayValue(barcode!.displayValue!);
+      }
+
+      return null;
+    }
   }
 }
