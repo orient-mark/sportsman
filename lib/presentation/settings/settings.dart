@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sportsman/domain/state/settings/settings_state.dart';
@@ -42,15 +40,12 @@ class _SettingsState extends State<Settings> {
               builder: (_) {
                 String resultText;
 
-                if (settingsState.isLoading) {
-                  return Center(
-                    child: Container(
-                      color: Colors.white,
-                      child: const CircularProgressIndicator(),
-                    ),
+                if (settingsState.isDownloading) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
                   );
                 }
-                if (settingsState.isGeted == false) {
+                if (settingsState.isGet == false) {
                   enabledTextFields = false;
                   resultText = 'Нет данных о пользователе';
                 } else {
@@ -112,7 +107,10 @@ class _SettingsState extends State<Settings> {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
-                      onPressed: showScanner,
+                      onPressed: () {
+                        settingsState.isSet = false;
+                        showScanner();
+                      },
                       child: const Text('Ввести данные пользователя'),
                     ),
                     Expanded(
@@ -136,7 +134,7 @@ class _SettingsState extends State<Settings> {
   }
 
   Future<void> showScanner() async {
-    String message = '';
+    settingsState.getParticipant();
 
     await showDialog(
       context: context,
@@ -151,7 +149,52 @@ class _SettingsState extends State<Settings> {
                   children: [
                     Header(context: context, title: 'Активный сканер'),
                     const SizedBox(height: 24.0),
-                    displayValue(message),
+                    Observer(builder: (_) {
+                      if (settingsState.isLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      var message = '';
+                      if (settingsState.isSet == false) {
+                        message = 'Данные не получены\n'
+                            'Отсканируй QR предоставленный организатором';
+                      } else {
+                        message = 'Данные получены';
+                        settingsState.getParticipant();
+                      }
+
+                      return Text(
+                        message,
+                        style: const TextStyle(color: Colors.black),
+                        textAlign: TextAlign.start,
+                        overflow: TextOverflow.fade,
+                      );
+                    }),
+                    const SizedBox(height: 8.0),
+                    Observer(builder: (_) {
+                      if (settingsState.isDownloading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      var message = '';
+                      if (settingsState.isGet == false) {
+                        message += '\nНет данных о пользователе';
+                      } else {
+                        message = 'Текущие данные:\n'
+                            '${settingsState.participant.name} ${settingsState.participant.surname}\n'
+                            'Чип: ${settingsState.participant.chip}';
+                      }
+                      return Text(
+                        message,
+                        style: const TextStyle(color: Colors.black),
+                        textAlign: TextAlign.start,
+                        overflow: TextOverflow.fade,
+                      );
+                    }),
                     const SizedBox(height: 12.0),
                     Expanded(
                       child: Stack(
@@ -161,18 +204,7 @@ class _SettingsState extends State<Settings> {
                             processTheDisplayValue: (String displayValue) {
                               if (mounted) {
                                 setState(() {
-                                  final data = jsonDecode(displayValue);
-
-                                  final name = data['name'];
-                                  final surname = data['surname'];
-                                  final chip =
-                                      int.parse(data['chip'].toString());
-
-                                  message =
-                                      '$name $surname\nЧип: ${chip.toString()}';
-
-                                  settingsState.setParticipant(
-                                      name, surname, chip);
+                                  settingsState.setParticipant(displayValue);
                                 });
                               }
                             },
@@ -188,38 +220,5 @@ class _SettingsState extends State<Settings> {
         );
       },
     );
-  }
-
-  Widget displayValue(String message) {
-    if (message.isEmpty) {
-      return const Text(
-        'Можно сканировать!',
-        style: TextStyle(color: Colors.black),
-        textAlign: TextAlign.center,
-        overflow: TextOverflow.fade,
-      );
-    }
-
-    return Observer(builder: (_) {
-      if (settingsState.isLoading) {
-        return const CircularProgressIndicator();
-      }
-
-      if (settingsState.isGeted == false) {
-        const Text(
-          'Нет данных о пользователе',
-          style: TextStyle(color: Colors.black),
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.fade,
-        );
-      }
-
-      return Text(
-        'Получены данные:\n$message',
-        style: const TextStyle(color: Colors.black),
-        textAlign: TextAlign.start,
-        overflow: TextOverflow.fade,
-      );
-    });
   }
 }
