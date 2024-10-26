@@ -61,9 +61,11 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Stack(
+      alignment: Alignment.bottomCenter,
       children: [
-        Expanded(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 48.0),
           child: MobileScanner(
             controller: controller,
             fit: BoxFit.fitWidth,
