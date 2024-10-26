@@ -24,12 +24,12 @@ class _SettingsState extends State<Settings> {
   void initState() {
     super.initState();
     settingsState = SettingsModule.settingsState();
+
+    settingsState.getParticipant();
   }
 
   @override
   Widget build(BuildContext context) {
-    settingsState.getParticipant();
-
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
@@ -134,8 +134,6 @@ class _SettingsState extends State<Settings> {
   }
 
   Future<void> showScanner() async {
-    settingsState.getParticipant();
-
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -162,7 +160,6 @@ class _SettingsState extends State<Settings> {
                             'Отсканируй QR предоставленный организатором';
                       } else {
                         message = 'Данные получены';
-                        settingsState.getParticipant();
                       }
 
                       return Text(
@@ -204,7 +201,7 @@ class _SettingsState extends State<Settings> {
                             processTheDisplayValue: (String displayValue) {
                               if (mounted) {
                                 setState(() {
-                                  settingsState.setParticipant(displayValue);
+                                  setParticipant(displayValue);
                                 });
                               }
                             },
@@ -220,5 +217,10 @@ class _SettingsState extends State<Settings> {
         );
       },
     );
+  }
+
+  void setParticipant(String message) async {
+    await settingsState.setParticipant(message);
+    settingsState.getParticipant();
   }
 }
