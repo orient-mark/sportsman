@@ -66,7 +66,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
         Expanded(
           child: MobileScanner(
             controller: controller,
-            fit: BoxFit.contain,
+            fit: BoxFit.fitWidth,
           ),
         ),
         Row(
