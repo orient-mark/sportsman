@@ -136,37 +136,90 @@ class _SettingsState extends State<Settings> {
   }
 
   Future<void> showScanner() async {
+    String message = '';
+
     await showDialog(
       context: context,
       builder: (BuildContext context) {
         return Dialog.fullscreen(
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Column(
-              children: [
-                Header(context: context, title: 'Отсканируй QR'),
-                Expanded(
-                  child: Scanner(
-                    processTheDisplayValue: (String displayValue) {
-                      if (mounted) {
-                        setState(() {
-                          final data = jsonDecode(displayValue);
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Header(context: context, title: 'Активный сканер'),
+                    const SizedBox(height: 24.0),
+                    displayValue(message),
+                    const SizedBox(height: 12.0),
+                    Expanded(
+                      child: Stack(
+                        alignment: Alignment.topCenter,
+                        children: [
+                          Scanner(
+                            processTheDisplayValue: (String displayValue) {
+                              if (mounted) {
+                                setState(() {
+                                  final data = jsonDecode(displayValue);
 
-                          final name = data['name'];
-                          final surname = data['surname'];
-                          final chip = int.parse(data['chip'].toString());
+                                  final name = data['name'];
+                                  final surname = data['surname'];
+                                  final chip =
+                                      int.parse(data['chip'].toString());
 
-                          settingsState.setParticipant(name, surname, chip);
-                        });
-                      }
-                    },
-                  ),
+                                  message =
+                                      '$name $surname\nЧип: ${chip.toString()}';
+
+                                  settingsState.setParticipant(
+                                      name, surname, chip);
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           ),
         );
       },
     );
+  }
+
+  Widget displayValue(String message) {
+    if (message.isEmpty) {
+      return const Text(
+        'Можно сканировать!',
+        style: TextStyle(color: Colors.black),
+        textAlign: TextAlign.center,
+        overflow: TextOverflow.fade,
+      );
+    }
+
+    return Observer(builder: (_) {
+      if (settingsState.isLoading) {
+        return const CircularProgressIndicator();
+      }
+
+      if (settingsState.isGeted == false) {
+        const Text(
+          'Нет данных о пользователе',
+          style: TextStyle(color: Colors.black),
+          textAlign: TextAlign.center,
+          overflow: TextOverflow.fade,
+        );
+      }
+
+      return Text(
+        'Получены данные:\n$message',
+        style: const TextStyle(color: Colors.black),
+        textAlign: TextAlign.start,
+        overflow: TextOverflow.fade,
+      );
+    });
   }
 }
