@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:mobx/mobx.dart';
-import 'package:sportsman/domain/model/participant.dart';
 
-import '../../repository/participant_repository.dart';
+import 'package:sportsman/domain/model/participant.dart';
+import 'package:sportsman/domain/repository/participant_repository.dart';
 
 part 'result_state.g.dart';
 

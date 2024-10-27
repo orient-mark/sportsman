@@ -1,9 +1,9 @@
 import 'package:mobx/mobx.dart';
 
-import '../../model/checkpoint.dart';
-import '../../model/split.dart';
-import '../../repository/checkpoint_repository.dart';
-import '../../repository/split_repository.dart';
+import 'package:sportsman/domain/model/checkpoint.dart';
+import 'package:sportsman/domain/model/split.dart';
+import 'package:sportsman/domain/repository/checkpoint_repository.dart';
+import 'package:sportsman/domain/repository/split_repository.dart';
 
 part 'scanner_state.g.dart';
 

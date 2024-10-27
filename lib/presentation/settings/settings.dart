@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+
 import 'package:sportsman/domain/state/settings/settings_state.dart';
 import 'package:sportsman/internal/dependencies/view/settings_module.dart';
+
 import 'package:sportsman/presentation/widgets/center_circular_progress_indicator.dart';
 import 'package:sportsman/presentation/widgets/header.dart';
 import 'package:sportsman/presentation/widgets/scanner/scanner.dart';

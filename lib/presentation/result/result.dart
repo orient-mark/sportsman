@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:sportsman/presentation/widgets/center_circular_progress_indicator.dart';
 
-import '../../domain/state/result/result_state.dart';
-import '../../internal/dependencies/view/result_module.dart';
-import '../widgets/header.dart';
-import 'widgets/qr.dart';
+import 'package:sportsman/domain/state/result/result_state.dart';
+import 'package:sportsman/internal/dependencies/view/result_module.dart';
+
+import 'package:sportsman/presentation/result/widgets/qr.dart';
+import 'package:sportsman/presentation/widgets/center_circular_progress_indicator.dart';
+import 'package:sportsman/presentation/widgets/header.dart';
 
 class Result extends StatefulWidget {
   const Result({super.key});
