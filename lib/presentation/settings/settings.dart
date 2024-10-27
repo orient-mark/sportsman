@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sportsman/domain/state/settings/settings_state.dart';
 import 'package:sportsman/internal/dependencies/view/settings_module.dart';
+import 'package:sportsman/presentation/widgets/center_circular_progress_indicator.dart';
 import 'package:sportsman/presentation/widgets/header.dart';
 import 'package:sportsman/presentation/widgets/scanner/scanner.dart';
 
@@ -41,9 +42,7 @@ class _SettingsState extends State<Settings> {
                 String resultText;
 
                 if (settingsState.isDownloading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return const CenterCircularProgressIndicator();
                 }
                 if (settingsState.isGet == false) {
                   enabledTextFields = false;
@@ -149,9 +148,7 @@ class _SettingsState extends State<Settings> {
                     const SizedBox(height: 24.0),
                     Observer(builder: (_) {
                       if (settingsState.isLoading) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return const CenterCircularProgressIndicator();
                       }
 
                       var message = '';
@@ -172,9 +169,7 @@ class _SettingsState extends State<Settings> {
                     const SizedBox(height: 8.0),
                     Observer(builder: (_) {
                       if (settingsState.isDownloading) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        return const CenterCircularProgressIndicator();
                       }
 
                       var message = '';

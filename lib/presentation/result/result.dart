@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:sportsman/presentation/widgets/center_circular_progress_indicator.dart';
 
 import '../../domain/state/result/result_state.dart';
 import '../../internal/dependencies/view/result_module.dart';
@@ -110,9 +111,7 @@ class _ResultState extends State<Result> {
     return Observer(
       builder: (_) {
         if (_resultState.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const CenterCircularProgressIndicator();
         }
         if (_resultState.isGeted == false) {
           return const Center(child: Text('Нет данных'));
@@ -148,9 +147,7 @@ class _ResultState extends State<Result> {
     return Observer(
       builder: (_) {
         if (_resultState.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const CenterCircularProgressIndicator();
         }
         if (_resultState.isGeted == false) {
           return const Center(child: Text('Нет данных'));
