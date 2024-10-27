@@ -85,8 +85,8 @@ class LocalService {
     }
   }
 
-  /// Получение последнего загруженого Checkpoints.
-  Future<ApiCheckpoint?> getCheckpoint() async {
+  /// Получение последнего загруженого Checkpoint.
+  Future<ApiCheckpoint?> getLastCheckpoint() async {
     final contents = await _readFile(_pathCheckpoints);
     if (contents.isNotEmpty) {
       final List<dynamic> dataList = jsonDecode(contents);

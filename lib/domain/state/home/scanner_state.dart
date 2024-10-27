@@ -27,7 +27,7 @@ abstract class ScannerStateBase with Store {
   Future<void> getCheckpoint() async {
     isLoading = true;
     isGeted = false;
-    final data = await _checkpointRepository.getCheckpoint();
+    final data = await _checkpointRepository.getLastCheckpoint();
     if (data != null) {
       checkpoint = data;
       isGeted = true;

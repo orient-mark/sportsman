@@ -79,8 +79,8 @@ class ApiUtil {
     }
   }
 
-  Future<Checkpoint?> getCheckpoint() async {
-    final result = await _localService.getCheckpoint();
+  Future<Checkpoint?> getLastCheckpoint() async {
+    final result = await _localService.getLastCheckpoint();
     if (result != null) {
       return CheckpointMapper.fromApi(result);
     } else {
