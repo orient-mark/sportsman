@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:mobx/mobx.dart';
 
 import 'package:sportsman/domain/model/checkpoint.dart';
@@ -15,55 +17,76 @@ abstract class ScannerStateBase with Store {
   final CheckpointRepository _checkpointRepository;
   final SplitRepository _splitRepository;
 
-  late Checkpoint checkpoint;
-  late Split split;
-
+  String lastPoint = '';
   @observable
-  bool isLoading = false;
+  bool isDownload = false;
   @observable
-  bool isGeted = false;
+  bool isGet = false;
+  @observable
+  bool isLoad = false;
+  @observable
+  bool isSet = false;
 
   @action
-  Future<void> getCheckpoint() async {
-    isLoading = true;
-    isGeted = false;
+  Future<void> getLastPoint() async {
+    isDownload = true;
+    isGet = false;
     final data = await _checkpointRepository.getLastCheckpoint();
-    if (data != null) {
-      checkpoint = data;
-      isGeted = true;
-    }
-    isLoading = false;
-  }
+    final split = await _splitRepository.getSplit() as Split;
 
-  @action
-  Future<void> setCheckpoint(String info, DateTime time) async {
-    await _checkpointRepository
-        .setCheckpoint(Checkpoint(info: info, time: time));
-  }
-
-  @action
-  Future<void> setSplitStart(DateTime startTime) async {
-    isGeted = false;
-    await _checkpointRepository.deleteCheckpoints();
-    await _splitRepository.setSplit(Split(startTime: startTime));
-  }
-
-  @action
-  Future<void> setSplitFinish(DateTime finishTime) async {
-    isGeted = false;
-    var split = await _splitRepository.getSplit();
-    if (split != null) {
-      split.finishTime = finishTime;
-      await _splitRepository.setSplit(split);
+    if (split.finishTime != null) {
+      lastPoint = 'финиш';
+      isGet = true;
+    } else if (data != null) {
+      lastPoint = data.info;
+      isGet = true;
+    } else if (split.startTime != null) {
+      lastPoint = 'старт';
+      isGet = true;
     } else {
-      await _splitRepository.setSplit(Split(finishTime: finishTime));
+      isGet = false;
     }
+
+    isDownload = false;
   }
 
   @action
-  Future<void> clearSlplit() async {
-    isGeted = false;
-    await _splitRepository.setSplit(Split(startTime: null, finishTime: null));
-    await _checkpointRepository.deleteCheckpoints();
+  Future<void> setPoint(String message, DateTime time) async {
+    isLoad = true;
+    isSet = false;
+    try {
+      final data = jsonDecode(message);
+      if (data['point'] == 'start') {
+        await _splitRepository.setSplit(Split(startTime: time));
+        await _checkpointRepository.deleteCheckpoints();
+        isSet = true;
+      }
+      if (data['point'] == 'finish') {
+        final split = await _splitRepository.getSplit();
+        if (split != null) {
+          split.finishTime = time;
+          await _splitRepository.setSplit(split);
+        } else {
+          await _splitRepository.setSplit(Split(finishTime: time));
+        }
+        isSet = true;
+      }
+      if (data['point'] == 'cleaning') {
+        await _splitRepository.setSplit(Split(
+          startTime: null,
+          finishTime: null,
+        ));
+        await _checkpointRepository.deleteCheckpoints();
+        isSet = true;
+      }
+      if (data['point'] is Map) {
+        await _checkpointRepository.setCheckpoint(Checkpoint(
+            info: data['point']['checkpoint'].toString(), time: time));
+        isSet = true;
+      }
+    } catch (e) {
+      isSet = false;
+    }
+    isLoad = false;
   }
 }

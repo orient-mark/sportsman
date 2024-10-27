@@ -1,10 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+
 import 'package:sportsman/domain/state/home/scanner_state.dart';
 import 'package:sportsman/internal/dependencies/view/home/scanner_module.dart';
+
+import 'package:sportsman/presentation/widgets/center_circular_progress_indicator.dart';
+import 'package:sportsman/presentation/widgets/header.dart';
 import 'package:sportsman/presentation/widgets/scanner/scanner.dart';
 
 class Home extends StatefulWidget {
@@ -17,24 +18,12 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late ScannerState scannerState;
 
-  Barcode? barcode;
-  late String info;
-  late DateTime time;
-  static const String start = 'start';
-  static const String finish = 'finish';
-  static const String clear = 'clear';
-
-  final MobileScannerController scannerController = MobileScannerController(
-    detectionSpeed: DetectionSpeed.noDuplicates,
-    useNewCameraSelector: true,
-    detectionTimeoutMs: 1000,
-  );
-
   @override
   void initState() {
     super.initState();
-
     scannerState = ScannerModule.scannerState();
+
+    scannerState.getLastPoint();
   }
 
   @override
@@ -70,24 +59,22 @@ class _HomeState extends State<Home> {
                       color: Colors.black,
                       iconSize: 32.0,
                       icon: const Icon(Icons.settings),
-                      onPressed: () async {
-                        scannerController.stop();
-                        await Navigator.pushNamed(context, '/settings');
-                        if (!context.mounted) return;
-                        unawaited(scannerController.start());
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/settings');
                       },
                     ),
                   ],
                 ),
-                Expanded(
-                  child: Stack(
-                    children: [
-                      Scanner(
-                        controller: scannerController,
-                        handleBarcode: handleBarcode,
-                      ),
-                      buildBarcode(barcode),
-                    ],
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(255, 132, 0, 1.0),
+                  ),
+                  onPressed: () {
+                    showScanner();
+                  },
+                  child: const Text(
+                    'Включить сканер',
+                    style: TextStyle(color: Colors.black),
                   ),
                 ),
               ],
@@ -98,104 +85,93 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget buildBarcode(Barcode? value) {
-    if (value == null) {
-      return const Align(
-        child: Text(
-          'Scan something!',
-          overflow: TextOverflow.fade,
-          style: TextStyle(color: Colors.black),
-        ),
-      );
-    }
+  Future<void> showScanner() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog.fullscreen(
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Header(context: context, title: 'Активный сканер'),
+                    const SizedBox(height: 24.0),
+                    Observer(
+                      builder: (_) {
+                        if (scannerState.isLoad) {
+                          return const CenterCircularProgressIndicator();
+                        }
 
-    return Observer(builder: (_) {
-      if (scannerState.isLoading) {
-        return const Center(
-          child: CircularProgressIndicator(),
+                        var message = '';
+                        if (scannerState.isSet == false) {
+                          message = 'Данные не получены\n'
+                              'Отсканируй QR трассы';
+                        } else {
+                          message = 'Данные получены';
+                        }
+
+                        return Text(
+                          message,
+                          style: const TextStyle(color: Colors.black),
+                          textAlign: TextAlign.start,
+                          overflow: TextOverflow.fade,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 8.0),
+                    Observer(
+                      builder: (_) {
+                        if (scannerState.isDownload) {
+                          return const CenterCircularProgressIndicator();
+                        }
+
+                        var message = '';
+                        if (scannerState.isGet == false) {
+                          message = 'Сплит чистый';
+                        } else {
+                          message =
+                              'Последнее сканирование: ${scannerState.lastPoint}';
+                        }
+
+                        return Text(
+                          message,
+                          style: const TextStyle(color: Colors.black),
+                          textAlign: TextAlign.start,
+                          overflow: TextOverflow.fade,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 12.0),
+                    Expanded(
+                      child: Stack(
+                        children: [
+                          Scanner(
+                            processTheDisplayValue: (String displayValue) {
+                              if (mounted) {
+                                setState(() {
+                                  setPoint(displayValue);
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         );
-      }
-      if (scannerState.isGeted == false) {
-        switch (barcode!.displayValue) {
-          case start:
-            return Align(
-              alignment: Alignment.bottomCenter,
-              child: dialog("Старт"),
-            );
-          case finish:
-            return Align(
-              alignment: Alignment.bottomCenter,
-              child: dialog("Финиш"),
-            );
-          case clear:
-            return Align(
-              alignment: Alignment.bottomCenter,
-              child: dialog("Очистка"),
-            );
-          default:
-            return Align(
-              alignment: Alignment.bottomCenter,
-              child: dialog("Не системный QR"),
-            );
-        }
-      }
-
-      return Align(
-        alignment: Alignment.bottomCenter,
-        child: dialog(
-            '${scannerState.checkpoint.info} time: ${scannerState.checkpoint.time.toString()}'),
-      );
-    });
-  }
-
-  Widget dialog(String? message) {
-    return Text(
-      message ?? 'No display value.',
-      overflow: TextOverflow.fade,
-      style: const TextStyle(color: Colors.black),
+      },
     );
   }
 
-  void handleBarcode(BarcodeCapture barcodes) {
-    if (mounted) {
-      setState(() {
-        time = DateTime.timestamp();
-        barcode = barcodes.barcodes.firstOrNull;
-
-        if (barcode!.displayValue != null) {
-          switch (barcode!.displayValue) {
-            case start:
-              checkpointStart(time);
-              break;
-            case finish:
-              checkpointFinish(time);
-              break;
-            case clear:
-              clearCheckpoints();
-              break;
-            default:
-              setCheckpoint();
-          }
-        }
-      });
-    }
-  }
-
-  void setCheckpoint() async {
-    info = barcode!.displayValue!;
-    await scannerState.setCheckpoint(info, time);
-    scannerState.getCheckpoint();
-  }
-
-  void checkpointStart(DateTime time) async {
-    await scannerState.setSplitStart(time);
-  }
-
-  void checkpointFinish(DateTime time) async {
-    await scannerState.setSplitFinish(time);
-  }
-
-  void clearCheckpoints() async {
-    await scannerState.clearSlplit();
+  void setPoint(String message) async {
+    await scannerState.setPoint(message, DateTime.timestamp());
+    scannerState.getLastPoint();
   }
 }
