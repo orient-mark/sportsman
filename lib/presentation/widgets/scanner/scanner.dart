@@ -20,8 +20,9 @@ class Scanner extends StatefulWidget {
 class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   final MobileScannerController controller = MobileScannerController(
     detectionSpeed: DetectionSpeed.noDuplicates,
-    useNewCameraSelector: true,
+    autoStart: true,
     detectionTimeoutMs: 1000,
+    // TODO в отличи от запущеной системы "facing: CameraFacing.front,"
   );
   Barcode? barcode;
 

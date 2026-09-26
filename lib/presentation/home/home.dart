@@ -22,8 +22,6 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     scannerState = ScannerModule.scannerState();
-
-    scannerState.getLastPoint();
   }
 
   @override
