@@ -90,6 +90,7 @@ class LocalService {
     final contents = await _readFile(_pathCheckpoints);
     if (contents.isNotEmpty) {
       final List<dynamic> dataList = jsonDecode(contents);
+      if (dataList.isEmpty) return null;
       return ApiCheckpoint.fromApi(dataList[dataList.length - 1]);
     } else {
       return null;

@@ -30,9 +30,7 @@ class _ResultState extends State<Result> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: FocusScope.of(context).unfocus,
-      child: Scaffold(
-        body: _getBody(),
-      ),
+      child: Scaffold(body: _getBody()),
     );
   }
 
@@ -41,12 +39,7 @@ class _ResultState extends State<Result> {
   final PageStorageBucket _bucket = PageStorageBucket();
 
   Widget _getBody() {
-    final List<Widget> pages = <Widget>[
-      _getQRSporsman(),
-      Expanded(
-        child: _getQRsplit(),
-      ),
-    ];
+    final List<Widget> pages = <Widget>[_getQRSporsman(), _getQRsplit()];
 
     return SafeArea(
       child: Padding(
@@ -56,10 +49,7 @@ class _ResultState extends State<Result> {
           children: [
             Header(context: context, title: titleTab),
             Expanded(
-              child: PageStorage(
-                bucket: _bucket,
-                child: pages[currentTab],
-              ),
+              child: PageStorage(bucket: _bucket, child: pages[currentTab]),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -76,7 +66,7 @@ class _ResultState extends State<Result> {
                         navigation(0);
                       },
                     ),
-                    const Text("Участник")
+                    const Text("Участник"),
                   ],
                 ),
                 Column(
@@ -91,11 +81,11 @@ class _ResultState extends State<Result> {
                         navigation(1);
                       },
                     ),
-                    const Text("Сплит")
+                    const Text("Сплит"),
                   ],
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -159,27 +149,28 @@ class _ResultState extends State<Result> {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _resultState.participantResult.length,
-                  itemBuilder: (_, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: Text("${index + 1}-я часть сплита"),
-                          ),
-                          QrWidget(
-                            data:
-                                "$index${_resultState.participantResult[index]}",
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
+                shrinkWrap: true,
+                itemCount: _resultState.participantResult.length,
+                itemBuilder: (_, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 32.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Text("${index + 1}-я часть сплита"),
+                        ),
+                        QrWidget(
+                          data:
+                              "$index${_resultState.participantResult[index]}",
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             );
           }
         }

@@ -46,59 +46,69 @@ abstract class ResultStateBase with Store {
     isFinished = false;
     isGeted = false;
     isLoading = true;
-    final data = await _participantRepository.getResultParticipant();
-    if (data != null) {
-      _participant = data;
+    participantResult.clear();
+    participantJSON = '';
+    try {
+      final data = await _participantRepository.getResultParticipant();
+      if (data != null) {
+        _participant = data;
 
-      participantName = "${_participant.surname} ${_participant.name}";
-      participantChip = _participant.chip;
-      // TODO добавить в participant трассу participant.track
-      participantSportsTrack = "number track";
+        participantName = "${_participant.surname} ${_participant.name}";
+        participantChip = _participant.chip;
+        // TODO добавить в participant трассу participant.track
+        participantSportsTrack = "number track";
 
-      DateTime? startTime = _participant.split!.startTime;
-      DateTime? finishTime = _participant.split!.finishTime;
+        DateTime? startTime = _participant.split?.startTime;
+        DateTime? finishTime = _participant.split?.finishTime;
 
-      if (finishTime == null) {
-        isGeted = true;
-        isLoading = false;
-        return;
-      }
-      isFinished = true;
+        if (finishTime == null) {
+          isGeted = true;
+          isLoading = false;
+          return;
+        }
+        isFinished = true;
 
-      var marks = _participant.split!.marks!;
+        final marks = _participant.split?.marks ?? [];
 
-      participantJSON = jsonEncode({
-        'name': _participant.name,
-        'surname': _participant.surname,
-        'number_chip': _participant.chip,
-        'start': startTime?.toIso8601String(),
-        'finish': finishTime.toIso8601String(),
-        'count_cp': marks.length,
-      });
+        participantJSON = jsonEncode({
+          'name': _participant.name,
+          'surname': _participant.surname,
+          'number_chip': _participant.chip,
+          'start': startTime?.toIso8601String(),
+          'finish': finishTime.toIso8601String(),
+          'count_cp': marks.length,
+        });
 
-      List<Map> listMap = List<Map>.empty(growable: true);
-      var kyeTime = startTime ?? finishTime;
+        List<Map> listMap = List<Map>.empty(growable: true);
+        var kyeTime = startTime ?? finishTime;
 
-      for (int i = 0; i < marks.length; i++) {
-        // Добавляем по размеру [stepSize]
-        if (i > 0 && (i % stepSize) == 0) {
+        for (int i = 0; i < marks.length; i++) {
+          // Добавляем по размеру [stepSize]
+          if (i > 0 && (i % stepSize) == 0) {
+            participantResult.add(jsonEncode(listMap));
+            listMap.clear();
+          }
+
+          // Если время от старта, то положительное будет
+          // иначе отрицательное.
+          var deltaTime = marks[i].time.difference(kyeTime);
+
+          listMap.add({marks[i].info: deltaTime.inMilliseconds});
+        }
+        if (listMap.isNotEmpty || marks.isEmpty) {
           participantResult.add(jsonEncode(listMap));
           listMap.clear();
         }
 
-        // Если время от старта, то положительное будет
-        // иначе отрицательное.
-        var deltaTime = marks[i].time.difference(kyeTime);
-
-        listMap.add({marks[i].info: deltaTime.inMilliseconds});
+        isGeted = true;
       }
-      if (listMap.isNotEmpty) {
-        participantResult.add(jsonEncode(listMap));
-        listMap.clear();
-      }
-
-      isGeted = true;
+    } catch (_) {
+      isGeted = false;
+      isFinished = false;
+      participantJSON = '';
+      participantResult.clear();
+    } finally {
+      isLoading = false;
     }
-    isLoading = false;
   }
 }

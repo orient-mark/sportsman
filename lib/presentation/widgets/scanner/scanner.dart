@@ -8,10 +8,7 @@ import 'package:sportsman/presentation/widgets/scanner/scanner_button_widgets.da
 class Scanner extends StatefulWidget {
   final Function(String) processTheDisplayValue;
 
-  const Scanner({
-    super.key,
-    required this.processTheDisplayValue,
-  });
+  const Scanner({super.key, required this.processTheDisplayValue});
 
   @override
   State<Scanner> createState() => _ScannerState();
@@ -20,12 +17,11 @@ class Scanner extends StatefulWidget {
 class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   final MobileScannerController controller = MobileScannerController(
     detectionSpeed: DetectionSpeed.noDuplicates,
-    autoStart: true,
+    autoStart: false,
+    formats: [BarcodeFormat.qrCode],
     detectionTimeoutMs: 1000,
     // TODO в отличи от запущеной системы "facing: CameraFacing.front,"
   );
-  Barcode? barcode;
-
   StreamSubscription<Object?>? subscription;
 
   @override
@@ -51,7 +47,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
       case AppLifecycleState.paused:
         return;
       case AppLifecycleState.resumed:
-        subscription = controller.barcodes.listen(onData);
+        subscription ??= controller.barcodes.listen(onData);
 
         unawaited(controller.start());
       case AppLifecycleState.inactive:
@@ -68,10 +64,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 48.0),
-          child: MobileScanner(
-            controller: controller,
-            fit: BoxFit.fitWidth,
-          ),
+          child: MobileScanner(controller: controller, fit: BoxFit.fitWidth),
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -79,29 +72,27 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
             ToggleFlashlightButton(controller: controller),
             StartStopMobileScannerButton(controller: controller),
           ],
-        )
+        ),
       ],
     );
   }
 
   @override
-  Future<void> dispose() async {
+  void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     unawaited(subscription?.cancel());
     subscription = null;
     super.dispose();
-    await controller.dispose();
+    unawaited(controller.dispose());
   }
 
-  void Function(BarcodeCapture)? onData(BarcodeCapture barcodes) {
-    {
-      barcode = barcodes.barcodes.firstOrNull;
-
-      if (barcode!.displayValue!.isNotEmpty) {
-        widget.processTheDisplayValue(barcode!.displayValue!);
-      }
-
-      return null;
+  void onData(BarcodeCapture capture) {
+    if (!mounted) return;
+    for (final barcode in capture.barcodes) {
+      final value = barcode.rawValue ?? barcode.displayValue;
+      if (value == null || value.trim().isEmpty) continue;
+      widget.processTheDisplayValue(value);
+      return;
     }
   }
 }

@@ -41,8 +41,12 @@ class _HomeState extends State<Home> {
                     Expanded(
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromRGBO(255, 132, 0, 1.0),
+                          backgroundColor: const Color.fromRGBO(
+                            255,
+                            132,
+                            0,
+                            1.0,
+                          ),
                         ),
                         onPressed: () {
                           Navigator.pushNamed(context, '/result');
@@ -84,6 +88,7 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> showScanner() async {
+    scannerState.getLastPoint();
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -105,7 +110,8 @@ class _HomeState extends State<Home> {
 
                         var message = '';
                         if (scannerState.isSet == false) {
-                          message = 'Данные не получены\n'
+                          message =
+                              'Данные не получены\n'
                               'Отсканируй QR трассы';
                         } else {
                           message = 'Данные получены';

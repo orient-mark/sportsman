@@ -45,8 +45,8 @@ class ApiUtil {
   Future<Split?> getSplitAndMarks() async {
     final split = await getSplit();
     final marks = await getCheckpoints();
-    if (split != null && marks != null) {
-      split.marks = marks;
+    if (split != null) {
+      split.marks = marks ?? <Checkpoint>[];
       return split;
     } else {
       return null;

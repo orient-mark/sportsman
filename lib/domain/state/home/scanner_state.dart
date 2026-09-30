@@ -31,31 +31,38 @@ abstract class ScannerStateBase with Store {
   Future<void> getLastPoint() async {
     isDownload = true;
     isGet = false;
-    final data = await _checkpointRepository.getLastCheckpoint();
-    final split = await _splitRepository.getSplit() as Split;
+    lastPoint = '';
+    try {
+      final data = await _checkpointRepository.getLastCheckpoint();
+      final split = await _splitRepository.getSplit();
 
-    if (split.finishTime != null) {
-      lastPoint = 'финиш';
-      isGet = true;
-    } else if (data != null) {
-      lastPoint = data.info;
-      isGet = true;
-    } else if (split.startTime != null) {
-      lastPoint = 'старт';
-      isGet = true;
-    } else {
+      if (split?.finishTime != null) {
+        lastPoint = 'финиш';
+        isGet = true;
+      } else if (data != null) {
+        lastPoint = data.info;
+        isGet = true;
+      } else if (split?.startTime != null) {
+        lastPoint = 'старт';
+        isGet = true;
+      } else {
+        isGet = false;
+      }
+    } catch (_) {
       isGet = false;
+    } finally {
+      isDownload = false;
     }
-
-    isDownload = false;
   }
 
   @action
   Future<void> setPoint(String message, DateTime time) async {
+    if (isLoad) return;
     isLoad = true;
     isSet = false;
     try {
       final data = jsonDecode(message);
+      if (data is! Map<String, dynamic>) return;
       if (data['point'] == 'start') {
         await _splitRepository.setSplit(Split(startTime: time));
         await _checkpointRepository.deleteCheckpoints();
@@ -64,7 +71,7 @@ abstract class ScannerStateBase with Store {
       if (data['point'] == 'finish') {
         final split = await _splitRepository.getSplit();
         if (split != null) {
-          split.finishTime = time;
+          split.finishTime ??= time;
           await _splitRepository.setSplit(split);
         } else {
           await _splitRepository.setSplit(Split(finishTime: time));
@@ -72,21 +79,26 @@ abstract class ScannerStateBase with Store {
         isSet = true;
       }
       if (data['point'] == 'cleaning') {
-        await _splitRepository.setSplit(Split(
-          startTime: null,
-          finishTime: null,
-        ));
+        await _splitRepository.setSplit(
+          Split(startTime: null, finishTime: null),
+        );
         await _checkpointRepository.deleteCheckpoints();
         isSet = true;
       }
       if (data['point'] is Map) {
-        await _checkpointRepository.setCheckpoint(Checkpoint(
-            info: data['point']['checkpoint'].toString(), time: time));
+        final checkpoint = data['point']['checkpoint'];
+        if (checkpoint is! String && checkpoint is! int) return;
+        final info = checkpoint.toString().trim();
+        if (info.isEmpty) return;
+        await _checkpointRepository.setCheckpoint(
+          Checkpoint(info: info, time: time),
+        );
         isSet = true;
       }
     } catch (e) {
       isSet = false;
+    } finally {
+      isLoad = false;
     }
-    isLoad = false;
   }
 }
