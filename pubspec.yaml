@@ -8,6 +8,10 @@ environment:
   sdk: ^3.13.0
 
 dependencies:
+  result_transfer:
+    git:
+      url: https://github.com/orient-mark/result-transfer.git
+      ref: dev
   flutter:
     sdk: flutter
 

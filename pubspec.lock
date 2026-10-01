@@ -552,6 +552,15 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  result_transfer:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: dev
+      resolved-ref: b9a0f2210e6e376c9b5139b5cf61b12489b4fd43
+      url: "https://github.com/orient-mark/result-transfer.git"
+    source: git
+    version: "1.0.0"
   shelf:
     dependency: transitive
     description:

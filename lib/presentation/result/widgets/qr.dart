@@ -1,38 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
-class QrWidget extends StatefulWidget {
+class QrWidget extends StatelessWidget {
   final String data;
-
-  const QrWidget({
-    required this.data,
-    super.key,
-  });
+  const QrWidget({super.key, required this.data});
 
   @override
-  State<QrWidget> createState() => _QrWidgetState();
-}
-
-class _QrWidgetState extends State<QrWidget> {
-  @protected
-  late QrImage qrImage;
-
-  @override
-  void initState() {
-    super.initState();
-
-    final qrCode = QrCode.fromData(
-      data: widget.data,
-      errorCorrectLevel: QrErrorCorrectLevel.H,
-    );
-
-    qrImage = QrImage(qrCode);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PrettyQrView(
-      qrImage: qrImage,
-    );
-  }
+  Widget build(BuildContext context) => ColoredBox(
+    color: Colors.white,
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: PrettyQrView(
+        key: ValueKey(data),
+        qrImage: QrImage(
+          QrCode.fromData(data: data, errorCorrectLevel: QrErrorCorrectLevel.M),
+        ),
+        decoration: const PrettyQrDecoration(
+          shape: PrettyQrSquaresSymbol(color: Colors.black),
+        ),
+      ),
+    ),
+  );
 }

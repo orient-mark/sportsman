@@ -1,184 +1,74 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-
 import 'package:sportsman/domain/state/result/result_state.dart';
 import 'package:sportsman/internal/dependencies/view/result_module.dart';
-
-import 'package:sportsman/presentation/result/widgets/qr.dart';
-import 'package:sportsman/presentation/widgets/center_circular_progress_indicator.dart';
-import 'package:sportsman/presentation/widgets/header.dart';
+import 'package:sportsman/presentation/result/widgets/animated_result_qr.dart';
+import 'package:sportsman/presentation/result/widgets/split_view.dart';
 
 class Result extends StatefulWidget {
   const Result({super.key});
-
   @override
   State<Result> createState() => _ResultState();
 }
 
 class _ResultState extends State<Result> {
-  late ResultState _resultState;
+  late final ResultState _resultState;
+  int _tab = 0;
 
   @override
   void initState() {
     super.initState();
-
     _resultState = ResultModule.resultState();
-    _getResult();
+    _resultState.getResult();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: FocusScope.of(context).unfocus,
-      child: Scaffold(body: _getBody()),
-    );
-  }
-
-  String titleTab = "QR Участника";
-  int currentTab = 0;
-  final PageStorageBucket _bucket = PageStorageBucket();
-
-  Widget _getBody() {
-    final List<Widget> pages = <Widget>[_getQRSporsman(), _getQRsplit()];
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Header(context: context, title: titleTab),
-            Expanded(
-              child: PageStorage(bucket: _bucket, child: pages[currentTab]),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    IconButton(
-                      color: currentTab == 0 ? Colors.orange : Colors.black,
-                      isSelected: currentTab == 0,
-                      icon: const Icon(Icons.accessibility_rounded),
-                      selectedIcon: const Icon(Icons.accessibility_new_rounded),
-                      onPressed: () {
-                        titleTab = "QR Участника";
-                        navigation(0);
-                      },
-                    ),
-                    const Text("Участник"),
-                  ],
-                ),
-                Column(
-                  children: [
-                    IconButton(
-                      color: currentTab == 1 ? Colors.orange : Colors.black,
-                      isSelected: currentTab == 1,
-                      icon: const Icon(Icons.receipt_long_outlined),
-                      selectedIcon: const Icon(Icons.receipt_long),
-                      onPressed: () {
-                        titleTab = "QR Сплита";
-                        navigation(1);
-                      },
-                    ),
-                    const Text("Сплит"),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void navigation(int number) {
-    setState(() {
-      currentTab = number;
-    });
-  }
-
-  Widget _getQRSporsman() {
-    return Observer(
-      builder: (_) {
-        if (_resultState.isLoading) {
-          return const CenterCircularProgressIndicator();
-        }
-        if (_resultState.isGeted == false) {
-          return const Center(child: Text('Нет данных'));
-        } else {
-          if (_resultState.isFinished == false) {
-            return const Center(child: Text('Нет ФИНИША'));
-          } else {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: Text(_tab == 0 ? 'Сплит' : 'Передать результат')),
+    body: SafeArea(
+      child: Observer(
+        builder: (_) {
+          if (_resultState.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final document = _resultState.document;
+          if (document != null && _tab == 0) {
+            return SplitView(document: document);
+          }
+          if (document != null && _resultState.qrFrames.isNotEmpty) {
+            return AnimatedResultQr(frames: _resultState.qrFrames);
+          }
+          final message =
+              _resultState.error ??
+              (_resultState.isGeted
+                  ? 'Нет отметки финиша. Отсканируйте QR финиша.'
+                  : 'Нет данных участника или сплита.');
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text("Участник: ${_resultState.participantName}"),
-                        Text("Чип: ${_resultState.participantChip}"),
-                      ],
-                    ),
+                  Text(message, textAlign: TextAlign.center),
+                  const SizedBox(height: 16),
+                  OutlinedButton(
+                    onPressed: _resultState.getResult,
+                    child: const Text('Обновить'),
                   ),
-                  QrWidget(data: _resultState.participantJSON),
                 ],
               ),
-            );
-          }
-        }
-      },
-    );
-  }
-
-  Widget _getQRsplit() {
-    return Observer(
-      builder: (_) {
-        if (_resultState.isLoading) {
-          return const CenterCircularProgressIndicator();
-        }
-        if (_resultState.isGeted == false) {
-          return const Center(child: Text('Нет данных'));
-        } else {
-          if (_resultState.isFinished == false) {
-            return const Center(child: Text('Нет ФИНИША'));
-          } else {
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: _resultState.participantResult.length,
-                itemBuilder: (_, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 32.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8.0),
-                          child: Text("${index + 1}-я часть сплита"),
-                        ),
-                        QrWidget(
-                          data:
-                              "$index${_resultState.participantResult[index]}",
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            );
-          }
-        }
-      },
-    );
-  }
-
-  void _getResult() {
-    _resultState.getResult();
-  }
+            ),
+          );
+        },
+      ),
+    ),
+    bottomNavigationBar: NavigationBar(
+      selectedIndex: _tab,
+      onDestinationSelected: (value) => setState(() => _tab = value),
+      destinations: const [
+        NavigationDestination(icon: Icon(Icons.receipt_long), label: 'Сплит'),
+        NavigationDestination(icon: Icon(Icons.qr_code), label: 'Передать'),
+      ],
+    ),
+  );
 }
