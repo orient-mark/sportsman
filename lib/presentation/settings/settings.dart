@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'package:sportsman/domain/state/settings/settings_state.dart';
@@ -38,7 +39,7 @@ class _SettingsState extends State<Settings> {
       child: Scaffold(
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: AppTheme.pagePadding,
             child: Observer(
               builder: (_) {
                 String resultText;
@@ -55,42 +56,29 @@ class _SettingsState extends State<Settings> {
                   resultText = 'Данные загружены';
                   nameController.text = settingsState.participant.name;
                   surnameController.text = settingsState.participant.surname;
-                  chipController.text =
-                      settingsState.participant.chip.toString();
+                  chipController.text = settingsState.participant.chip
+                      .toString();
                 }
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Header(
-                      context: context,
-                      title: 'Настройки',
-                    ),
-                    const SizedBox(height: 20.0),
+                    Header(context: context, title: 'Настройки'),
+                    const SizedBox(height: AppTheme.spaceField),
                     TextField(
                       controller: nameController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        labelText: 'Имя',
-                      ),
+                      decoration: InputDecoration(labelText: 'Имя'),
                       readOnly: true,
                       enabled: enabledTextFields,
                     ),
-                    const SizedBox(height: 20.0),
+                    const SizedBox(height: AppTheme.spaceField),
                     TextField(
                       controller: surnameController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        labelText: 'Фамилия',
-                      ),
+                      decoration: InputDecoration(labelText: 'Фамилия'),
                       readOnly: true,
                       enabled: enabledTextFields,
                     ),
-                    const SizedBox(height: 20.0),
+                    const SizedBox(height: AppTheme.spaceField),
                     TextField(
                       controller: chipController,
                       keyboardType: const TextInputType.numberWithOptions(
@@ -98,15 +86,12 @@ class _SettingsState extends State<Settings> {
                         signed: true,
                       ),
                       decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
                         labelText: 'Номер чипа',
                         enabled: enabledTextFields,
                       ),
                       readOnly: true,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppTheme.spaceField),
                     ElevatedButton(
                       onPressed: () {
                         settingsState.isSet = false;
@@ -117,13 +102,10 @@ class _SettingsState extends State<Settings> {
                     Expanded(
                       child: Align(
                         alignment: Alignment.bottomCenter,
-                        child: Text(
-                          resultText,
-                          textAlign: TextAlign.center,
-                        ),
+                        child: Text(resultText, textAlign: TextAlign.center),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppTheme.spaceField),
                   ],
                 );
               },
@@ -142,54 +124,58 @@ class _SettingsState extends State<Settings> {
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: AppTheme.pagePadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Header(context: context, title: 'Активный сканер'),
-                    const SizedBox(height: 24.0),
-                    Observer(builder: (_) {
-                      if (settingsState.isLoading) {
-                        return const CenterCircularProgressIndicator();
-                      }
+                    const SizedBox(height: AppTheme.spaceSection),
+                    Observer(
+                      builder: (_) {
+                        if (settingsState.isLoading) {
+                          return const CenterCircularProgressIndicator();
+                        }
 
-                      var message = '';
-                      if (settingsState.isSet == false) {
-                        message = 'Данные не получены\n'
-                            'Отсканируй QR предоставленный организатором';
-                      } else {
-                        message = 'Данные получены';
-                      }
+                        var message = '';
+                        if (settingsState.isSet == false) {
+                          message =
+                              'Данные не получены\n'
+                              'Отсканируй QR предоставленный организатором';
+                        } else {
+                          message = 'Данные получены';
+                        }
 
-                      return Text(
-                        message,
-                        style: const TextStyle(color: Colors.black),
-                        textAlign: TextAlign.start,
-                        overflow: TextOverflow.fade,
-                      );
-                    }),
-                    const SizedBox(height: 8.0),
-                    Observer(builder: (_) {
-                      if (settingsState.isDownloading) {
-                        return const CenterCircularProgressIndicator();
-                      }
+                        return Text(
+                          message,
+                          textAlign: TextAlign.start,
+                          overflow: TextOverflow.fade,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: AppTheme.spaceSmall),
+                    Observer(
+                      builder: (_) {
+                        if (settingsState.isDownloading) {
+                          return const CenterCircularProgressIndicator();
+                        }
 
-                      var message = '';
-                      if (settingsState.isGet == false) {
-                        message += '\nНет данных о пользователе';
-                      } else {
-                        message = 'Текущие данные:\n'
-                            '${settingsState.participant.name} ${settingsState.participant.surname}\n'
-                            'Чип: ${settingsState.participant.chip}';
-                      }
-                      return Text(
-                        message,
-                        style: const TextStyle(color: Colors.black),
-                        textAlign: TextAlign.start,
-                        overflow: TextOverflow.fade,
-                      );
-                    }),
-                    const SizedBox(height: 12.0),
+                        var message = '';
+                        if (settingsState.isGet == false) {
+                          message += '\nНет данных о пользователе';
+                        } else {
+                          message =
+                              'Текущие данные:\n'
+                              '${settingsState.participant.name} ${settingsState.participant.surname}\n'
+                              'Чип: ${settingsState.participant.chip}';
+                        }
+                        return Text(
+                          message,
+                          textAlign: TextAlign.start,
+                          overflow: TextOverflow.fade,
+                        );
+                      },
+                    ),
+                    const SizedBox(height: AppTheme.spaceMedium),
                     Expanded(
                       child: Stack(
                         alignment: Alignment.topCenter,

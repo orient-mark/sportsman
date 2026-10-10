@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:sportsman/presentation/result/widgets/qr.dart';
 
 class AnimatedResultQr extends StatefulWidget {
@@ -61,29 +62,32 @@ class _AnimatedResultQrState extends State<AnimatedResultQr>
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
-      final size = max(120.0, min(440.0, constraints.maxWidth - 32));
+      final size = max(
+        AppTheme.qrMinSize,
+        min(AppTheme.qrMaxSize, constraints.maxWidth - AppTheme.spaceLarge * 2),
+      );
       return SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: AppTheme.pagePadding,
         child: Column(
           children: [
             const Text(
               'У организатора нажмите «Считать результат» и направьте камеру на этот QR.',
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppTheme.spaceLarge),
             SizedBox(
               width: size,
               height: size,
               child: QrWidget(data: widget.frames[_index]),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppTheme.spaceMedium),
             Text('Кадр ${_index + 1} из ${widget.frames.length}'),
             const Text(
               'Держите экран открытым до подтверждения на телефоне организатора.',
               textAlign: TextAlign.center,
             ),
             if (widget.frames.length > 1) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: AppTheme.spaceMedium),
               DropdownButton<int>(
                 value: _intervalMs,
                 items: const [
@@ -107,7 +111,7 @@ class _AnimatedResultQrState extends State<AnimatedResultQr>
                 },
               ),
               Wrap(
-                spacing: 12,
+                spacing: AppTheme.spaceMedium,
                 children: [
                   OutlinedButton.icon(
                     icon: Icon(_paused ? Icons.play_arrow : Icons.pause),

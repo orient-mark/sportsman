@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:sportsman/domain/state/result/result_state.dart';
 import 'package:sportsman/internal/dependencies/view/result_module.dart';
@@ -45,12 +46,12 @@ class _ResultState extends State<Result> {
                   : 'Нет данных участника или сплита.');
           return Center(
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(AppTheme.spaceSection),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(message, textAlign: TextAlign.center),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: AppTheme.spaceLarge),
                   OutlinedButton(
                     onPressed: _resultState.getResult,
                     child: const Text('Обновить'),

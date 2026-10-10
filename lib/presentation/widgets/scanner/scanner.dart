@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 import 'package:sportsman/presentation/widgets/scanner/scanner_button_widgets.dart';
@@ -63,7 +64,9 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
       alignment: Alignment.bottomCenter,
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 48.0),
+          padding: const EdgeInsets.only(
+            bottom: AppTheme.scannerControlsHeight,
+          ),
           child: MobileScanner(controller: controller, fit: BoxFit.fitWidth),
         ),
         Row(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class StartStopMobileScannerButton extends StatelessWidget {
@@ -13,9 +14,7 @@ class StartStopMobileScannerButton extends StatelessWidget {
       builder: (context, state, child) {
         if (!state.isInitialized || !state.isRunning) {
           return IconButton(
-            color: Colors.black,
             icon: const Icon(Icons.play_arrow),
-            iconSize: 32.0,
             onPressed: () async {
               await controller.start();
             },
@@ -23,9 +22,7 @@ class StartStopMobileScannerButton extends StatelessWidget {
         }
 
         return IconButton(
-          color: Colors.black,
           icon: const Icon(Icons.stop),
-          iconSize: 32.0,
           onPressed: () async {
             await controller.stop();
           },
@@ -52,8 +49,6 @@ class ToggleFlashlightButton extends StatelessWidget {
         switch (state.torchState) {
           case TorchState.auto:
             return IconButton(
-              color: Colors.white,
-              iconSize: 32.0,
               icon: const Icon(Icons.flash_auto),
               onPressed: () async {
                 await controller.toggleTorch();
@@ -61,8 +56,6 @@ class ToggleFlashlightButton extends StatelessWidget {
             );
           case TorchState.off:
             return IconButton(
-              color: Colors.black,
-              iconSize: 32.0,
               icon: const Icon(Icons.flash_off),
               onPressed: () async {
                 await controller.toggleTorch();
@@ -70,20 +63,18 @@ class ToggleFlashlightButton extends StatelessWidget {
             );
           case TorchState.on:
             return IconButton(
-              color: Colors.black,
-              iconSize: 32.0,
               icon: const Icon(Icons.flash_on),
               onPressed: () async {
                 await controller.toggleTorch();
               },
             );
           case TorchState.unavailable:
-            return const Padding(
-              padding: EdgeInsets.all(8.0),
+            return Padding(
+              padding: EdgeInsets.all(AppTheme.spaceSmall),
               child: Icon(
                 Icons.no_flash,
-                size: 32,
-                color: Colors.grey,
+                size: AppTheme.iconSize,
+                color: Theme.of(context).disabledColor,
               ),
             );
         }

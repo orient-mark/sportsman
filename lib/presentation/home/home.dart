@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'package:sportsman/domain/state/home/scanner_state.dart';
@@ -31,7 +32,7 @@ class _HomeState extends State<Home> {
       child: Scaffold(
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(10),
+            padding: AppTheme.pagePadding,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -40,26 +41,13 @@ class _HomeState extends State<Home> {
                   children: [
                     Expanded(
                       child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromRGBO(
-                            255,
-                            132,
-                            0,
-                            1.0,
-                          ),
-                        ),
                         onPressed: () {
                           Navigator.pushNamed(context, '/result');
                         },
-                        child: const Text(
-                          'Показать сплит',
-                          style: TextStyle(color: Colors.black),
-                        ),
+                        child: const Text('Показать сплит'),
                       ),
                     ),
                     IconButton(
-                      color: Colors.black,
-                      iconSize: 32.0,
                       icon: const Icon(Icons.settings),
                       onPressed: () {
                         Navigator.pushNamed(context, '/settings');
@@ -68,16 +56,10 @@ class _HomeState extends State<Home> {
                   ],
                 ),
                 ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(255, 132, 0, 1.0),
-                  ),
                   onPressed: () {
                     showScanner();
                   },
-                  child: const Text(
-                    'Включить сканер',
-                    style: TextStyle(color: Colors.black),
-                  ),
+                  child: const Text('Включить сканер'),
                 ),
               ],
             ),
@@ -96,12 +78,12 @@ class _HomeState extends State<Home> {
           child: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: AppTheme.pagePadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Header(context: context, title: 'Активный сканер'),
-                    const SizedBox(height: 24.0),
+                    const SizedBox(height: AppTheme.spaceSection),
                     Observer(
                       builder: (_) {
                         if (scannerState.isLoad) {
@@ -119,13 +101,12 @@ class _HomeState extends State<Home> {
 
                         return Text(
                           message,
-                          style: const TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.fade,
                         );
                       },
                     ),
-                    const SizedBox(height: 8.0),
+                    const SizedBox(height: AppTheme.spaceSmall),
                     Observer(
                       builder: (_) {
                         if (scannerState.isDownload) {
@@ -142,13 +123,12 @@ class _HomeState extends State<Home> {
 
                         return Text(
                           message,
-                          style: const TextStyle(color: Colors.black),
                           textAlign: TextAlign.start,
                           overflow: TextOverflow.fade,
                         );
                       },
                     ),
-                    const SizedBox(height: 12.0),
+                    const SizedBox(height: AppTheme.spaceMedium),
                     Expanded(
                       child: Stack(
                         children: [
