@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android" android:drawable="@drawable/splash_icon_vector"><target android:name="node0" android:animation="@animator/splash_pulse_0"/>
+<target android:name="route" android:animation="@animator/splash_route"/>
+<target android:name="arrow_shape" android:animation="@animator/splash_arrow_alpha"/>
+<target android:name="arrow" android:animation="@animator/splash_arrow_motion"/>
+<target android:name="art" android:animation="@animator/splash_duration"/></animated-vector>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- Keep the badge inside the adaptive icon's central safe area. -->
+    <path android:fillColor="#D32F2F" android:strokeColor="#FFFFFF" android:strokeWidth="0.7"
+        android:pathData="M33,62 H75 Q79,62 79,66 V74 Q79,78 75,78 H33 Q29,78 29,74 V66 Q29,62 33,62 Z" />
+    <group android:translateX="34.4" android:translateY="65.3" android:scaleX="1.35" android:scaleY="1.35">
+        <path android:fillColor="#FFFFFF" android:pathData="M0,0h4v1h-4z M0,1h1v1h-1z M4,1h1v1h-1z M0,2h1v1h-1z M4,2h1v1h-1z M0,3h1v1h-1z M4,3h1v1h-1z M0,4h1v1h-1z M4,4h1v1h-1z M0,5h1v1h-1z M4,5h1v1h-1z M0,6h4v1h-4z" />
+    </group>
+    <group android:translateX="42.5" android:translateY="65.3" android:scaleX="1.35" android:scaleY="1.35">
+        <path android:fillColor="#FFFFFF" android:pathData="M0,0h5v1h-5z M0,1h1v1h-1z M0,2h1v1h-1z M0,3h4v1h-4z M0,4h1v1h-1z M0,5h1v1h-1z M0,6h5v1h-5z" />
+    </group>
+    <group android:translateX="50.6" android:translateY="65.3" android:scaleX="1.35" android:scaleY="1.35">
+        <path android:fillColor="#FFFFFF" android:pathData="M0,0h4v1h-4z M0,1h1v1h-1z M4,1h1v1h-1z M0,2h1v1h-1z M4,2h1v1h-1z M0,3h4v1h-4z M0,4h1v1h-1z M4,4h1v1h-1z M0,5h1v1h-1z M4,5h1v1h-1z M0,6h4v1h-4z" />
+    </group>
+    <group android:translateX="58.7" android:translateY="65.3" android:scaleX="1.35" android:scaleY="1.35">
+        <path android:fillColor="#FFFFFF" android:pathData="M0,0h1v1h-1z M4,0h1v1h-1z M0,1h1v1h-1z M4,1h1v1h-1z M0,2h1v1h-1z M4,2h1v1h-1z M0,3h1v1h-1z M4,3h1v1h-1z M0,4h1v1h-1z M4,4h1v1h-1z M0,5h1v1h-1z M4,5h1v1h-1z M1,6h3v1h-3z" />
+    </group>
+    <group android:translateX="66.8" android:translateY="65.3" android:scaleX="1.35" android:scaleY="1.35">
+        <path android:fillColor="#FFFFFF" android:pathData="M1,0h4v1h-4z M0,1h1v1h-1z M0,2h1v1h-1z M0,3h1v1h-1z M2,3h3v1h-3z M0,4h1v1h-1z M4,4h1v1h-1z M0,5h1v1h-1z M4,5h1v1h-1z M1,6h4v1h-4z" />
+    </group>
+</vector>
