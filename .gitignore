@@ -43,6 +43,16 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/.kotlin/
 
 # My files test
-test/
+/test/
+
+# Local secrets; commit only templates.
+.env
+.env.*
+!.env.example
+android/key.properties
+android/keystore/
+*.jks
+*.keystore

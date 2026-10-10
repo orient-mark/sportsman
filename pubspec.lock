@@ -424,6 +424,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  participant_identity:
+    dependency: "direct main"
+    description:
+      path: "../participant-identity"
+      relative: true
+    source: path
+    version: "1.0.0"
   path:
     dependency: transitive
     description:
@@ -555,12 +562,10 @@ packages:
   result_transfer:
     dependency: "direct main"
     description:
-      path: "."
-      ref: dev
-      resolved-ref: b9a0f2210e6e376c9b5139b5cf61b12489b4fd43
-      url: "https://github.com/orient-mark/result-transfer.git"
-    source: git
-    version: "1.0.0"
+      path: "../result-transfer"
+      relative: true
+    source: path
+    version: "2.0.0"
   shelf:
     dependency: transitive
     description:
@@ -654,6 +659,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.0"
+  uuid:
+    dependency: transitive
+    description:
+      name: uuid
+      sha256: "9b129329f58692f6e6578329498a8fe9fbe98f090beb764ffbb8ee2eadd01dcd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.6.0"
   vector_math:
     dependency: transitive
     description:

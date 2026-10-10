@@ -2,16 +2,16 @@ name: sportsman
 description: "Sportsman application."
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 0.1.0+1
 
 environment:
   sdk: ^3.13.0
 
 dependencies:
+  participant_identity:
+    path: ../participant-identity
   result_transfer:
-    git:
-      url: https://github.com/orient-mark/result-transfer.git
-      ref: dev
+    path: ../result-transfer
   flutter:
     sdk: flutter
 
@@ -32,3 +32,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/branding/cover.png

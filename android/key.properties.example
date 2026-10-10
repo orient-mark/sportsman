@@ -1,0 +1,6 @@
+# Copy to key.properties and fill locally. Never commit passwords or the keystore.
+# storeFile is relative to the android directory, or an absolute path.
+storeFile=keystore/sportsman-release.jks
+storePassword=
+keyAlias=sportsman
+keyPassword=
