@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:participant_identity/participant_identity.dart';
+
 import 'package:mobx/mobx.dart';
 
 import 'package:sportsman/domain/model/participant.dart';
@@ -50,11 +52,25 @@ abstract class SettingsStateBase with Store {
 
     try {
       final data = jsonDecode(message);
+      final p = data['participant'];
+      if (p['id'] != null &&
+          p['id'] !=
+              ParticipantIdentity.id(
+                surname: p['surname'],
+                firstName: p['name'],
+                patronymic: p['patronymic'] ?? '',
+                birthDate: p['birth_date'],
+              )) {
+        throw const FormatException('Неверный UUID регистрации');
+      }
       await _participantRepository.setParticipant(
         Participant(
           name: data['participant']['name'],
           surname: data['participant']['surname'],
-          chip: int.parse(data['participant']['chip'].toString()),
+          chip: int.tryParse(data['participant']['chip'].toString()) ?? 0,
+          participantId: data['participant']['id'],
+          patronymic: data['participant']['patronymic'] ?? '',
+          birthDate: data['participant']['birth_date'] ?? '',
         ),
       );
       isSet = true;

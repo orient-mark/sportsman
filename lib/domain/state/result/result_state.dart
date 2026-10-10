@@ -36,19 +36,23 @@ abstract class ResultStateBase with Store {
       isGeted = true;
       final split = participant.split;
       final finish = split?.finishTime;
-      if (finish == null) return;
-      final marks = split?.marks ?? [];
+      if (split == null) return;
+      final marks = split.marks ?? [];
+      if (split.startTime == null && finish == null && marks.isEmpty) return;
       document = ResultDocument(
         name: participant.name,
         surname: participant.surname,
         chip: participant.chip,
-        start: split?.startTime,
+        participantId: participant.participantId,
+        patronymic: participant.patronymic ?? '',
+        birthDate: participant.birthDate,
+        start: split.startTime,
         finish: finish,
         marks: marks.map(
           (mark) => ResultMark(code: mark.info, time: mark.time),
         ),
       );
-      isFinished = true;
+      isFinished = finish != null;
       qrFrames = ResultQrEncoder.encode(document!);
     } catch (_) {
       error = document == null

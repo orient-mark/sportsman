@@ -1,20 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:result_transfer/result_transfer.dart';
-
-String formatInterval(Duration? value) {
-  if (value == null) return '—';
-  final ms = value.inMilliseconds.abs();
-  final hours = ms ~/ 3600000;
-  final minutes = (ms ~/ 60000 % 60).toString().padLeft(2, '0');
-  final seconds = (ms ~/ 1000 % 60).toString().padLeft(2, '0');
-  final fraction = (ms % 1000).toString().padLeft(3, '0');
-  return '${value.isNegative ? '-' : ''}$hours:$minutes:$seconds.$fraction';
-}
-
-String formatClock(DateTime? value) {
-  if (value == null) return 'Нет отметки';
-  return value.toLocal().toIso8601String().replaceFirst('T', ' ');
-}
+import 'package:sportsman/presentation/formatters/display_date_time.dart';
 
 class SplitView extends StatelessWidget {
   final ResultDocument document;
@@ -24,30 +11,36 @@ class SplitView extends StatelessWidget {
   Widget build(BuildContext context) {
     final start = document.start;
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: AppTheme.pagePadding,
       children: [
         Text(
           '${document.surname} ${document.name}',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         Text('Номер: ${document.chip}'),
-        const SizedBox(height: 16),
-        Text('Старт: ${formatClock(start)}'),
-        Text('Финиш: ${formatClock(document.finish)}'),
+        const SizedBox(height: AppTheme.spaceLarge),
+        Text('Старт: ${DisplayDateTime.dateTime(start)}'),
+        Text('Финиш: ${DisplayDateTime.dateTime(document.finish)}'),
         Text(
-          'Общее время: ${formatInterval(start == null ? null : document.finish.difference(start))}',
+          'Общее время: ${DisplayDateTime.interval(start == null ? null : document.finish?.difference(start))}',
         ),
         Text('Отметок КП: ${document.marks.length}'),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppTheme.spaceLarge),
         if (start == null)
           const Text(
             'Без отметки старта общее время и время от старта недоступны. '
             'Интервалы между КП показаны по сохранённым отметкам.',
           ),
         if (document.marks.isEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 24),
-            child: Text('Нет отметок КП. Финиш сохранён.'),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: AppTheme.spaceSection,
+            ),
+            child: Text(
+              document.finish == null
+                  ? 'Нет отметок КП и финиша.'
+                  : 'Нет отметок КП. Финиш сохранён.',
+            ),
           )
         else
           SingleChildScrollView(
@@ -66,10 +59,12 @@ class SplitView extends StatelessWidget {
                     cells: [
                       DataCell(Text('${i + 1}')),
                       DataCell(Text(document.marks[i].code)),
-                      DataCell(Text(formatClock(document.marks[i].time))),
+                      DataCell(
+                        Text(DisplayDateTime.dateTime(document.marks[i].time)),
+                      ),
                       DataCell(
                         Text(
-                          formatInterval(
+                          DisplayDateTime.interval(
                             i == 0
                                 ? (start == null
                                       ? null
@@ -84,7 +79,7 @@ class SplitView extends StatelessWidget {
                       ),
                       DataCell(
                         Text(
-                          formatInterval(
+                          DisplayDateTime.interval(
                             start == null
                                 ? null
                                 : document.marks[i].time.difference(start),
@@ -98,9 +93,9 @@ class SplitView extends StatelessWidget {
           ),
         if (document.marks.isNotEmpty)
           Padding(
-            padding: const EdgeInsets.only(top: 16),
+            padding: const EdgeInsets.only(top: AppTheme.spaceLarge),
             child: Text(
-              'Последний КП → финиш: ${formatInterval(document.finish.difference(document.marks.last.time))}',
+              'Последний КП → финиш: ${DisplayDateTime.interval(document.finish?.difference(document.marks.last.time))}',
             ),
           ),
       ],
