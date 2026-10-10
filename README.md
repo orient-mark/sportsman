@@ -1,5 +1,7 @@
 # sportsman
 
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/orient-mark/sportsman/total)
+
 Этот клиент будет создан для спортсменов или просто участников мероприятий.
 
 ## Features
