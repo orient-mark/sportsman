@@ -2,7 +2,7 @@ name: sportsman
 description: "Sportsman application."
 publish_to: 'none'
 
-version: 0.8.0+2
+version: 0.8.5+3
 
 environment:
   sdk: ^3.13.0
