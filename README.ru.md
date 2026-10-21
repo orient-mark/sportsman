@@ -2,7 +2,7 @@
 
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/orient-mark/sportsman/total)
 
-[English](README.md) | [Русский](README.ru.md)
+[English](README.md) | Русский
 
 Приложение для спортсменов и других участников мероприятий, использующих систему отметки и хронометража [OrientMark](https://github.com/orient-mark).
 

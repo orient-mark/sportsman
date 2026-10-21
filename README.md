@@ -2,7 +2,7 @@
 
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/orient-mark/sportsman/total)
 
-[English](README.md) | [Русский](README.ru.md)
+English | [Русский](README.ru.md)
 
 An app for athletes and other event participants who use the [OrientMark](https://github.com/orient-mark) checkpoint and timing system.
 
