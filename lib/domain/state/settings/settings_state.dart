@@ -31,18 +31,26 @@ abstract class SettingsStateBase with Store {
   @observable
   bool isGet = false;
 
+  String? participantLoadError;
+
   @action
   Future<void> getParticipant() async {
+    if (isDownloading) return;
     isGet = false;
     isDownloading = true;
-    final data = await _participantRepository.getParticipant();
-    if (data != null) {
-      participant = data;
-      isGet = true;
-    } else {
+    participantLoadError = null;
+    try {
+      final data = await _participantRepository.getParticipant();
+      if (data != null) {
+        participant = data;
+        isGet = true;
+      }
+    } catch (_) {
       isGet = false;
+      participantLoadError = 'Не удалось загрузить данные пользователя. Повторите попытку или отсканируйте QR организатора.';
+    } finally {
+      isDownloading = false;
     }
-    isDownloading = false;
   }
 
   @action

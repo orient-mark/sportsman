@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import 'package:sportsman/domain/state/home/scanner_state.dart';
+import 'package:sportsman/domain/model/scan_outcome.dart';
 import 'package:sportsman/internal/dependencies/view/home/scanner_module.dart';
 
 import 'package:sportsman/presentation/widgets/center_circular_progress_indicator.dart';
 import 'package:sportsman/presentation/widgets/header.dart';
+import 'package:sportsman/presentation/widgets/mark_feedback.dart';
 import 'package:sportsman/presentation/widgets/scanner/scanner.dart';
 
 class Home extends StatefulWidget {
@@ -18,11 +22,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   late ScannerState scannerState;
+  late final MarkFeedback _feedback;
+  int _scannerSession = 0;
+  bool _scannerOpen = false;
 
   @override
   void initState() {
     super.initState();
     scannerState = ScannerModule.scannerState();
+    _feedback = MarkFeedback();
   }
 
   @override
@@ -70,7 +78,10 @@ class _HomeState extends State<Home> {
   }
 
   Future<void> showScanner() async {
-    scannerState.getLastPoint();
+    if (_scannerOpen) return;
+    _scannerOpen = true;
+    final session = ++_scannerSession;
+    unawaited(scannerState.getLastPoint());
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -90,14 +101,14 @@ class _HomeState extends State<Home> {
                           return const CenterCircularProgressIndicator();
                         }
 
-                        var message = '';
-                        if (scannerState.isSet == false) {
-                          message =
-                              'Данные не получены\n'
-                              'Отсканируй QR трассы';
-                        } else {
-                          message = 'Данные получены';
-                        }
+                        final message = switch (scannerState.lastOutcome) {
+                          ScanOutcome.recorded => 'Отметка записана',
+                          ScanOutcome.repeated => 'Отметка уже сохранена',
+                          ScanOutcome.invalid =>
+                            'Этот QR не является отметкой трассы',
+                          ScanOutcome.failed => 'Не удалось сохранить отметку. Повторите считывание',
+                          null => 'Отсканируй QR трассы',
+                        };
 
                         return Text(
                           message,
@@ -134,11 +145,8 @@ class _HomeState extends State<Home> {
                         children: [
                           Scanner(
                             processTheDisplayValue: (String displayValue) {
-                              if (mounted) {
-                                setState(() {
-                                  setPoint(displayValue);
-                                });
-                              }
+                              if (!mounted) return;
+                              unawaited(setPoint(displayValue, session));
                             },
                           ),
                         ],
@@ -152,10 +160,28 @@ class _HomeState extends State<Home> {
         );
       },
     );
+    _scannerOpen = false;
+    _feedback.dismiss();
   }
 
-  void setPoint(String message) async {
-    await scannerState.setPoint(message, DateTime.timestamp());
-    scannerState.getLastPoint();
+  Future<void> setPoint(String message, int session) async {
+    if (!mounted || !_scannerOpen || session != _scannerSession) return;
+    final outcome = await scannerState.processPoint(
+      message,
+      DateTime.timestamp(),
+    );
+    if (!mounted || !_scannerOpen || session != _scannerSession) return;
+    if (outcome.confirmed) {
+      unawaited(_feedback.show(context));
+    } else {
+      _feedback.dismiss();
+    }
+    unawaited(scannerState.getLastPoint());
+  }
+
+  @override
+  void dispose() {
+    unawaited(_feedback.dispose());
+    super.dispose();
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -7,6 +9,7 @@ import 'package:sportsman/internal/dependencies/view/settings_module.dart';
 
 import 'package:sportsman/presentation/widgets/center_circular_progress_indicator.dart';
 import 'package:sportsman/presentation/widgets/header.dart';
+import 'package:sportsman/presentation/widgets/mark_feedback.dart';
 import 'package:sportsman/presentation/widgets/scanner/scanner.dart';
 
 class Settings extends StatefulWidget {
@@ -18,6 +21,7 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   late SettingsState settingsState;
+  late final MarkFeedback _feedback;
 
   final nameController = TextEditingController();
   final surnameController = TextEditingController();
@@ -30,6 +34,7 @@ class _SettingsState extends State<Settings> {
     settingsState = SettingsModule.settingsState();
 
     settingsState.getParticipant();
+    _feedback = MarkFeedback();
   }
 
   @override
@@ -49,7 +54,9 @@ class _SettingsState extends State<Settings> {
                 }
                 if (settingsState.isGet == false) {
                   enabledTextFields = false;
-                  resultText = 'Нет данных о пользователе';
+                  resultText =
+                      settingsState.participantLoadError ??
+                      'Нет данных о пользователе';
                 } else {
                   enabledTextFields = true;
 
@@ -66,15 +73,15 @@ class _SettingsState extends State<Settings> {
                     Header(context: context, title: 'Настройки'),
                     const SizedBox(height: AppTheme.spaceField),
                     TextField(
-                      controller: nameController,
-                      decoration: InputDecoration(labelText: 'Имя'),
+                      controller: surnameController,
+                      decoration: InputDecoration(labelText: 'Фамилия'),
                       readOnly: true,
                       enabled: enabledTextFields,
                     ),
                     const SizedBox(height: AppTheme.spaceField),
                     TextField(
-                      controller: surnameController,
-                      decoration: InputDecoration(labelText: 'Фамилия'),
+                      controller: nameController,
+                      decoration: InputDecoration(labelText: 'Имя'),
                       readOnly: true,
                       enabled: enabledTextFields,
                     ),
@@ -92,6 +99,11 @@ class _SettingsState extends State<Settings> {
                       readOnly: true,
                     ),
                     const SizedBox(height: AppTheme.spaceField),
+                    if (settingsState.participantLoadError != null)
+                      OutlinedButton(
+                        onPressed: settingsState.getParticipant,
+                        child: const Text('Повторить загрузку'),
+                      ),
                     ElevatedButton(
                       onPressed: () {
                         settingsState.isSet = false;
@@ -161,11 +173,13 @@ class _SettingsState extends State<Settings> {
 
                         var message = '';
                         if (settingsState.isGet == false) {
-                          message += '\nНет данных о пользователе';
+                          message =
+                              settingsState.participantLoadError ??
+                              '\nНет данных о пользователе';
                         } else {
                           message =
                               'Текущие данные:\n'
-                              '${settingsState.participant.name} ${settingsState.participant.surname}\n'
+                              '${settingsState.participant.surname} ${settingsState.participant.name}\n'
                               'Чип: ${settingsState.participant.chip}';
                         }
                         return Text(
@@ -185,6 +199,10 @@ class _SettingsState extends State<Settings> {
                               if (mounted) {
                                 setState(() {
                                   setParticipant(displayValue);
+                                  if (settingsState.isGet) {
+                                    unawaited(_feedback.show(context));
+                                    Navigator.of(context).pop();
+                                  }
                                 });
                               }
                             },
@@ -205,5 +223,14 @@ class _SettingsState extends State<Settings> {
   void setParticipant(String message) async {
     await settingsState.setParticipant(message);
     settingsState.getParticipant();
+  }
+
+  @override
+  void dispose() {
+    unawaited(_feedback.dispose());
+    nameController.dispose();
+    surnameController.dispose();
+    chipController.dispose();
+    super.dispose();
   }
 }

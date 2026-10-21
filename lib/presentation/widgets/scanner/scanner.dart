@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -20,8 +21,6 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
     detectionSpeed: DetectionSpeed.noDuplicates,
     autoStart: false,
     formats: [BarcodeFormat.qrCode],
-    detectionTimeoutMs: 1000,
-    // TODO в отличи от запущеной системы "facing: CameraFacing.front,"
   );
   StreamSubscription<Object?>? subscription;
 
@@ -33,7 +32,20 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
 
     subscription = controller.barcodes.listen(onData);
 
-    unawaited(controller.start());
+    // Attach MobileScanner before starting the camera; controller.start()
+    // otherwise waits only 500 ms for the first widget frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(_startCamera());
+    });
+  }
+
+  Future<void> _startCamera() async {
+    try {
+      await controller.start();
+    } on MobileScannerException catch (error) {
+      // The scanner widget displays camera/permission errors from its controller.
+      if (kDebugMode) debugPrint('Cannot start scanner: $error');
+    }
   }
 
   @override
@@ -50,7 +62,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
       case AppLifecycleState.resumed:
         subscription ??= controller.barcodes.listen(onData);
 
-        unawaited(controller.start());
+        unawaited(_startCamera());
       case AppLifecycleState.inactive:
         unawaited(subscription?.cancel());
         subscription = null;
@@ -94,6 +106,11 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
     for (final barcode in capture.barcodes) {
       final value = barcode.rawValue ?? barcode.displayValue;
       if (value == null || value.trim().isEmpty) continue;
+      if (kDebugMode) {
+        debugPrint(
+          'QR timing: detected at ${DateTime.now().toIso8601String()}',
+        );
+      }
       widget.processTheDisplayValue(value);
       return;
     }

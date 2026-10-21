@@ -3,19 +3,31 @@ import 'dart:convert';
 import 'package:mobx/mobx.dart';
 
 import 'package:sportsman/domain/model/checkpoint.dart';
+import 'package:sportsman/domain/model/scan_outcome.dart';
 import 'package:sportsman/domain/model/split.dart';
 import 'package:sportsman/domain/repository/checkpoint_repository.dart';
 import 'package:sportsman/domain/repository/split_repository.dart';
+import 'package:sportsman/domain/usecase/record_checkpoint_use_case.dart';
 
 part 'scanner_state.g.dart';
 
 class ScannerState = ScannerStateBase with _$ScannerState;
 
 abstract class ScannerStateBase with Store {
-  ScannerStateBase(this._checkpointRepository, this._splitRepository);
+  ScannerStateBase(
+    this._checkpointRepository,
+    this._splitRepository,
+    this._recordCheckpoint,
+  );
 
   final CheckpointRepository _checkpointRepository;
   final SplitRepository _splitRepository;
+  final RecordCheckpointUseCase _recordCheckpoint;
+
+  // Reads and writes share a queue: opening the scanner cannot race a scan.
+  Future<void> _operations = Future.value();
+  final _lastOutcome = Observable<ScanOutcome?>(null);
+  ScanOutcome? get lastOutcome => _lastOutcome.value;
 
   String lastPoint = '';
   @observable
@@ -24,81 +36,117 @@ abstract class ScannerStateBase with Store {
   bool isGet = false;
   @observable
   bool isLoad = false;
+
+  /// Whether this scan wrote data. A repeat is confirmed separately.
   @observable
   bool isSet = false;
 
-  @action
-  Future<void> getLastPoint() async {
-    isDownload = true;
-    isGet = false;
-    lastPoint = '';
-    try {
-      final data = await _checkpointRepository.getLastCheckpoint();
-      final split = await _splitRepository.getSplit();
-
-      if (split?.finishTime != null) {
-        lastPoint = 'финиш';
-        isGet = true;
-      } else if (data != null) {
-        lastPoint = data.info;
-        isGet = true;
-      } else if (split?.startTime != null) {
-        lastPoint = 'старт';
-        isGet = true;
-      } else {
-        isGet = false;
-      }
-    } catch (_) {
-      isGet = false;
-    } finally {
-      isDownload = false;
-    }
+  Future<T> _serialize<T>(Future<T> Function() operation) {
+    final result = _operations.then((_) => operation());
+    _operations = result.then<void>(
+      (_) {},
+      onError: (Object _, StackTrace _) {},
+    );
+    return result;
   }
 
   @action
-  Future<void> setPoint(String message, DateTime time) async {
-    if (isLoad) return;
-    isLoad = true;
-    isSet = false;
+  Future<void> getLastPoint() => _serialize(_readLastPoint);
+
+  Future<void> _readLastPoint() async {
+    runInAction(() {
+      isDownload = true;
+      isGet = false;
+      lastPoint = '';
+    });
     try {
-      final data = jsonDecode(message);
-      if (data is! Map<String, dynamic>) return;
-      if (data['point'] == 'start') {
+      final data = await _checkpointRepository.getLastCheckpoint();
+      final split = await _splitRepository.getSplit();
+      final finish = split?.finishTime;
+      final point =
+          finish != null && (data == null || !data.time.isAfter(finish))
+          ? 'финиш'
+          : data?.info ?? (split?.startTime != null ? 'старт' : '');
+      runInAction(() {
+        lastPoint = point;
+        isGet = point.isNotEmpty;
+      });
+    } catch (_) {
+      runInAction(() => isGet = false);
+    } finally {
+      runInAction(() => isDownload = false);
+    }
+  }
+
+  // Preserve the MobX-generated public action and existing callers.
+  @action
+  Future<void> setPoint(String message, DateTime time) async {
+    await processPoint(message, time);
+  }
+
+  Future<ScanOutcome> processPoint(String message, DateTime time) =>
+      _serialize(() => _processPoint(message, time));
+
+  Future<ScanOutcome> _processPoint(String message, DateTime time) async {
+    runInAction(() {
+      isLoad = true;
+      isSet = false;
+      _lastOutcome.value = null;
+    });
+    var outcome = ScanOutcome.invalid;
+    try {
+      Object? data;
+      try {
+        data = jsonDecode(message);
+      } on FormatException {
+        return outcome;
+      }
+      if (data is! Map<String, dynamic>) return outcome;
+      final point = data['point'];
+      if (point == 'start') {
         await _splitRepository.setSplit(Split(startTime: time));
         await _checkpointRepository.deleteCheckpoints();
-        isSet = true;
+        return outcome = ScanOutcome.recorded;
       }
-      if (data['point'] == 'finish') {
-        final split = await _splitRepository.getSplit();
-        if (split != null) {
-          split.finishTime ??= time;
-          await _splitRepository.setSplit(split);
-        } else {
-          await _splitRepository.setSplit(Split(finishTime: time));
+      if (point == 'finish') {
+        final split = await _splitRepository.getSplit() ?? Split();
+        final oldFinish = split.finishTime;
+        if (oldFinish != null) {
+          final last = await _checkpointRepository.getLastCheckpoint();
+          if (last == null || !last.time.isAfter(oldFinish)) {
+            return outcome = ScanOutcome.repeated;
+          }
         }
-        isSet = true;
+        split.finishTime = time;
+        await _splitRepository.setSplit(split);
+        return outcome = ScanOutcome.recorded;
       }
-      if (data['point'] == 'cleaning') {
-        await _splitRepository.setSplit(
-          Split(startTime: null, finishTime: null),
-        );
+      if (point == 'cleaning') {
+        await _splitRepository.setSplit(Split());
         await _checkpointRepository.deleteCheckpoints();
-        isSet = true;
+        return outcome = ScanOutcome.recorded;
       }
-      if (data['point'] is Map) {
-        final checkpoint = data['point']['checkpoint'];
-        if (checkpoint is! String && checkpoint is! int) return;
+      if (point is Map<String, dynamic>) {
+        final checkpoint = point['checkpoint'];
+        if (checkpoint is! String && checkpoint is! int) return outcome;
         final info = checkpoint.toString().trim();
-        if (info.isEmpty) return;
-        await _checkpointRepository.setCheckpoint(
+        if (!RegExp(r'^[3-9][0-9]$').hasMatch(info) || info == '30') {
+          return outcome;
+        }
+        final written = await _recordCheckpoint.execute(
           Checkpoint(info: info, time: time),
         );
-        isSet = true;
+        return outcome = written ? ScanOutcome.recorded : ScanOutcome.repeated;
       }
-    } catch (e) {
-      isSet = false;
+      return outcome;
+    } catch (_) {
+      return outcome = ScanOutcome.failed;
     } finally {
-      isLoad = false;
+      runInAction(() {
+        isSet = outcome == ScanOutcome.recorded;
+        _lastOutcome.value = outcome;
+        isLoad = false;
+      });
     }
   }
 }
