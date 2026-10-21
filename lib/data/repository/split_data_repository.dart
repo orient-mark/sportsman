@@ -13,6 +13,9 @@ class SplitDataRepository extends SplitRepository {
   }
 
   @override
+  Future<Split?> getSplitAndMarks() => _apiUtil.getSplitAndMarks();
+
+  @override
   Future setSplit(Split split) {
     return _apiUtil.setSplit(split);
   }

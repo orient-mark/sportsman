@@ -1,14 +1,19 @@
 import 'package:mobx/mobx.dart';
 import 'package:result_transfer/result_transfer.dart';
 import 'package:sportsman/domain/repository/participant_repository.dart';
+import 'package:sportsman/domain/repository/split_repository.dart';
 
 part 'result_state.g.dart';
 
 class ResultState = ResultStateBase with _$ResultState;
 
 abstract class ResultStateBase with Store {
-  ResultStateBase(this._participantRepository);
+  ResultStateBase(
+    this._participantRepository, {
+    this._splitRepository,
+  });
   final ParticipantRepository _participantRepository;
+  final SplitRepository? _splitRepository;
 
   ResultDocument? document;
   List<String> qrFrames = const [];
@@ -31,28 +36,32 @@ abstract class ResultStateBase with Store {
     qrFrames = const [];
     error = null;
     try {
-      final participant = await _participantRepository.getResultParticipant();
-      if (participant == null) return;
-      isGeted = true;
-      final split = participant.split;
+      final participant = _splitRepository == null
+          ? await _participantRepository.getResultParticipant()
+          : await _participantRepository.getParticipant();
+      isGeted = participant != null;
+      final split = _splitRepository == null
+          ? participant?.split
+          : await _splitRepository.getSplitAndMarks();
       final finish = split?.finishTime;
-      if (split == null) return;
-      final marks = split.marks ?? [];
-      if (split.startTime == null && finish == null && marks.isEmpty) return;
+      final marks = split?.marks ?? [];
       document = ResultDocument(
-        name: participant.name,
-        surname: participant.surname,
-        chip: participant.chip,
-        participantId: participant.participantId,
-        patronymic: participant.patronymic ?? '',
-        birthDate: participant.birthDate,
-        start: split.startTime,
+        name: participant?.name ?? '',
+        surname: participant?.surname ?? '',
+        chip: participant?.chip ?? 0,
+        participantId: participant?.participantId,
+        patronymic: participant?.patronymic ?? '',
+        birthDate: participant?.birthDate ?? '',
+        start: split?.startTime,
         finish: finish,
         marks: marks.map(
           (mark) => ResultMark(code: mark.info, time: mark.time),
         ),
       );
       isFinished = finish != null;
+      // An anonymous document is a local preview and must never be encoded.
+      if (participant == null) return;
+      if (split?.startTime == null && finish == null && marks.isEmpty) return;
       qrFrames = ResultQrEncoder.encode(document!);
     } catch (_) {
       error = document == null

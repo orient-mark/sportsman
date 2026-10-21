@@ -43,14 +43,12 @@ class ApiUtil {
   //#region Сплит
 
   Future<Split?> getSplitAndMarks() async {
-    final split = await getSplit();
+    final savedSplit = await getSplit();
     final marks = await getCheckpoints();
-    if (split != null) {
-      split.marks = marks ?? <Checkpoint>[];
-      return split;
-    } else {
-      return null;
-    }
+    if (savedSplit == null && (marks == null || marks.isEmpty)) return null;
+    final split = savedSplit ?? Split();
+    split.marks = marks ?? <Checkpoint>[];
+    return split;
   }
 
   Future<Split?> getSplit() async {

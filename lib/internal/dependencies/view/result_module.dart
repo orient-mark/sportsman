@@ -5,6 +5,7 @@ class ResultModule {
   static ResultState resultState() {
     return ResultState(
       RepositoryModule.participantRepository(),
+      splitRepository: RepositoryModule.splitRepository(),
     );
   }
 }

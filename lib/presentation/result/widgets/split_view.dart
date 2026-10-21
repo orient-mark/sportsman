@@ -5,7 +5,12 @@ import 'package:sportsman/presentation/formatters/display_date_time.dart';
 
 class SplitView extends StatelessWidget {
   final ResultDocument document;
-  const SplitView({super.key, required this.document});
+  final bool hasParticipantData;
+  const SplitView({
+    super.key,
+    required this.document,
+    this.hasParticipantData = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +22,7 @@ class SplitView extends StatelessWidget {
           '${document.surname} ${document.name}',
           style: Theme.of(context).textTheme.titleLarge,
         ),
-        Text('Номер: ${document.chip}'),
+        Text('Номер: ${hasParticipantData ? document.chip : ''}'),
         const SizedBox(height: AppTheme.spaceLarge),
         Text('Старт: ${DisplayDateTime.dateTime(start)}'),
         Text('Финиш: ${DisplayDateTime.dateTime(document.finish)}'),

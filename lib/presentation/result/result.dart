@@ -34,16 +34,21 @@ class _ResultState extends State<Result> {
           }
           final document = _resultState.document;
           if (document != null && _tab == 0) {
-            return SplitView(document: document);
+            return SplitView(
+              document: document,
+              hasParticipantData: _resultState.isGeted,
+            );
           }
-          if (document != null && _resultState.qrFrames.isNotEmpty) {
+          if (_resultState.isGeted &&
+              document != null &&
+              _resultState.qrFrames.isNotEmpty) {
             return AnimatedResultQr(frames: _resultState.qrFrames);
           }
           final message =
               _resultState.error ??
               (_resultState.isGeted
-                  ? 'Нет отметки финиша. Отсканируйте QR финиша.'
-                  : 'Нет данных участника или сплита.');
+                  ? 'Пока нет отметок для передачи.'
+                  : 'Для передачи результата нужна регистрация. Отсканируйте QR участника у организатора.');
           return Center(
             child: Padding(
               padding: const EdgeInsets.all(AppTheme.spaceSection),
