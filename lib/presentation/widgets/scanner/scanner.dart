@@ -18,17 +18,25 @@ class Scanner extends StatefulWidget {
 
 class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   final MobileScannerController controller = MobileScannerController(
-    detectionSpeed: DetectionSpeed.noDuplicates,
+    detectionSpeed: kIsWeb
+        ? DetectionSpeed.normal
+        : DetectionSpeed.noDuplicates,
     autoStart: false,
     formats: [BarcodeFormat.qrCode],
   );
   StreamSubscription<Object?>? subscription;
+  String? _lastWebValue;
+
+  void _onCameraStateChanged() {
+    if (!controller.value.isRunning) _lastWebValue = null;
+  }
 
   @override
   void initState() {
     super.initState();
 
     WidgetsBinding.instance.addObserver(this);
+    controller.addListener(_onCameraStateChanged);
 
     subscription = controller.barcodes.listen(onData);
 
@@ -95,6 +103,7 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    controller.removeListener(_onCameraStateChanged);
     unawaited(subscription?.cancel());
     subscription = null;
     super.dispose();
@@ -106,6 +115,12 @@ class _ScannerState extends State<Scanner> with WidgetsBindingObserver {
     for (final barcode in capture.barcodes) {
       final value = barcode.rawValue ?? barcode.displayValue;
       if (value == null || value.trim().isEmpty) continue;
+      // ZXing's web reader emits every successful decode, including duplicates.
+      // A new camera session must still confirm an already saved checkpoint.
+      if (kIsWeb) {
+        if (value == _lastWebValue) return;
+        _lastWebValue = value;
+      }
       if (kDebugMode) {
         debugPrint(
           'QR timing: detected at ${DateTime.now().toIso8601String()}',

@@ -18,7 +18,8 @@ if (result.status !== 0) process.exit(result.status || 1);
 const output = path.join(root, 'build/web');
 await mkdir(path.join(output, 'vendor'), {recursive: true});
 const decoder = path.join(path.dirname(require.resolve('@zxing/library/package.json')), 'umd/index.min.js');
-await copyFile(decoder, path.join(output, 'vendor/zxing.min.js'));
+await writeFile(path.join(output, 'vendor/zxing.min.js'),
+  (await readFile(decoder, 'utf8')) + '\n;\n' + (await readFile(path.join(root, 'web/zxing-settings.js'), 'utf8')));
 await copyFile(path.join(path.dirname(require.resolve('@zxing/library/package.json')), 'LICENSE'), path.join(output, 'vendor/ZXING-LICENSE'));
 await copyFile(path.join(path.dirname(require.resolve('workbox-build/package.json')), 'LICENSE'), path.join(output, 'vendor/WORKBOX-LICENSE'));
 const version = (await readFile(path.join(root, 'pubspec.yaml'), 'utf8')).match(/^version:\s*(.+)$/m)[1].trim();
