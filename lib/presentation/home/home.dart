@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import '../../internal/pwa/platform.dart';
+
 import 'package:flutter/material.dart';
 import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -166,9 +168,8 @@ class _HomeState extends State<Home> {
 
   Future<void> setPoint(String message, int session) async {
     if (!mounted || !_scannerOpen || session != _scannerSession) return;
-    final outcome = await scannerState.processPoint(
-      message,
-      DateTime.timestamp(),
+    final outcome = await runPwaOperation(
+      () => scannerState.processPoint(message, DateTime.timestamp()),
     );
     if (!mounted || !_scannerOpen || session != _scannerSession) return;
     if (outcome.confirmed) {

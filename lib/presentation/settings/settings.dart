@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import '../../internal/pwa/platform.dart';
+
 import 'package:flutter/material.dart';
 import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -27,6 +29,7 @@ class _SettingsState extends State<Settings> {
   final surnameController = TextEditingController();
   final chipController = TextEditingController();
   bool enabledTextFields = false;
+  bool _registrationInProgress = false;
 
   @override
   void initState() {
@@ -196,15 +199,7 @@ class _SettingsState extends State<Settings> {
                         children: [
                           Scanner(
                             processTheDisplayValue: (String displayValue) {
-                              if (mounted) {
-                                setState(() {
-                                  setParticipant(displayValue);
-                                  if (settingsState.isGet) {
-                                    unawaited(_feedback.show(context));
-                                    Navigator.of(context).pop();
-                                  }
-                                });
-                              }
+                              unawaited(setParticipant(displayValue, context));
                             },
                           ),
                         ],
@@ -220,9 +215,23 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  void setParticipant(String message) async {
-    await settingsState.setParticipant(message);
-    settingsState.getParticipant();
+  Future<void> setParticipant(
+    String message,
+    BuildContext scannerContext,
+  ) async {
+    if (_registrationInProgress) return;
+    _registrationInProgress = true;
+    try {
+      await runPwaOperation(() async {
+        await settingsState.setParticipant(message);
+        if (settingsState.isSet) await settingsState.getParticipant();
+      });
+      if (!mounted || !scannerContext.mounted || !settingsState.isSet) return;
+      Navigator.of(scannerContext).pop();
+      unawaited(_feedback.show(context));
+    } finally {
+      _registrationInProgress = false;
+    }
   }
 
   @override

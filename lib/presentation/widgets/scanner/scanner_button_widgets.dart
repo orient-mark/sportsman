@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+
+import '../../../internal/pwa/platform.dart';
+
 import 'package:sportsman/presentation/theme/app_theme.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -46,6 +50,8 @@ class ToggleFlashlightButton extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
+        if (kIsWeb) return const _WebTorchButton();
+
         switch (state.torchState) {
           case TorchState.auto:
             return IconButton(
@@ -81,4 +87,47 @@ class ToggleFlashlightButton extends StatelessWidget {
       },
     );
   }
+}
+
+class _WebTorchButton extends StatefulWidget {
+  const _WebTorchButton();
+
+  @override
+  State<_WebTorchButton> createState() => _WebTorchButtonState();
+}
+
+class _WebTorchButtonState extends State<_WebTorchButton> {
+  late final Future<bool> _available = webTorchAvailable();
+  bool _on = false;
+  bool _busy = false;
+
+  Future<void> _toggle() async {
+    setState(() => _busy = true);
+    try {
+      final on = await toggleWebTorch();
+      if (mounted) setState(() => _on = on);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Браузер не разрешил включить подсветку камеры.'),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => FutureBuilder<bool>(
+    future: _available,
+    builder: (context, snapshot) => IconButton(
+      tooltip: snapshot.data == true
+          ? 'Подсветка камеры'
+          : 'Подсветка недоступна в браузере',
+      onPressed: snapshot.data == true && !_busy ? _toggle : null,
+      icon: Icon(_on ? Icons.flash_on : Icons.flash_off),
+    ),
+  );
 }

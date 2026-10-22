@@ -6,6 +6,7 @@ import '../presentation/result/result.dart';
 import '../presentation/settings/settings.dart';
 import '../presentation/startup/startup_screen.dart';
 import '../presentation/theme/app_theme.dart';
+import 'pwa/navigation_observer.dart';
 
 class Application extends StatelessWidget {
   const Application({super.key, this.releaseFirstFrame = false});
@@ -15,6 +16,7 @@ class Application extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorObservers: [PwaNavigationObserver()],
       theme: AppTheme.light,
       builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
         value: const SystemUiOverlayStyle(

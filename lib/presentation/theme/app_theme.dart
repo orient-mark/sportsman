@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 /// The application's visual settings. Widgets inherit component styles from
 /// ThemeData and use these shared dimensions for their layout.
@@ -33,7 +34,12 @@ abstract final class AppTheme {
           surface: surface,
           onSurface: foreground,
         );
-    final base = ThemeData(useMaterial3: true, colorScheme: colors);
+    final base = ThemeData(
+      useMaterial3: true,
+      colorScheme: colors,
+      fontFamily: kIsWeb ? 'SportsmanSans' : null,
+      fontFamilyFallback: kIsWeb ? const ['SportsmanSymbols'] : null,
+    );
     final text = base.textTheme
         .apply(bodyColor: foreground, displayColor: foreground)
         .copyWith(titleLarge: const TextStyle(fontSize: 20, color: primary));
