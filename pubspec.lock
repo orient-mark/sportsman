@@ -491,9 +491,11 @@ packages:
   participant_identity:
     dependency: "direct main"
     description:
-      path: "../participant-identity"
-      relative: true
-    source: path
+      path: "."
+      ref: "1.0.0"
+      resolved-ref: "7858da8af0b36d135edbfe7be9f991e8e6bd0a3f"
+      url: "https://github.com/orient-mark/participant-identity.git"
+    source: git
     version: "1.0.0"
   path:
     dependency: transitive

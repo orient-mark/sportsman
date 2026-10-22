@@ -17,15 +17,14 @@ Download the APK file to your device using this direct [link](https://github.com
 Once camera access is granted, QR scanning becomes available in the app.
 
 **To complete the course:**
-
 1. Enable the scanner in the app's main menu.
-2. Scan the QR codes at each checkpoint. A sound and an animated green checkmark confirm the scan.
-3. To illuminate a QR code, tap the lightning bolt button 🗲 in scanning mode.
+2. Scan the QR codes at each checkpoint. A sound and an animated green checkmark confirm the scan. To illuminate a QR code, tap the lightning bolt button 🗲 in scanning mode.
 
-To view your split, tap "Показать сплит" on the main screen. On the screen that opens, you can switch to the tab for transferring your split to the event organizer.
+**To view your split:**
+1. Tap "Показать сплит" on the main screen.
+2. On the screen that opens, you can switch to the tab for transferring your split to the event organizer.
 
-To register in the checkpoint system:
-
+**To register in the checkpoint system:**
 1. Open settings from the main screen using the gear button ⛭ at the top of the screen.
 2. Tap "Ввести данные пользователя" and scan the registration code provided by the organizer.
 

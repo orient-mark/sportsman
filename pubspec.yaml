@@ -10,7 +10,9 @@ environment:
 dependencies:
   audioplayers: ^6.8.1
   participant_identity:
-    path: ../participant-identity
+    git:
+      url: https://github.com/orient-mark/participant-identity.git
+      ref: 1.0.0
   result_transfer:
     git:
       url: https://github.com/orient-mark/result-transfer.git
@@ -38,3 +40,14 @@ flutter:
   assets:
     - assets/branding/cover.png
     - assets/audio/mark_success.wav
+    - assets/fonts/roboto_license.txt
+    - assets/fonts/noto-sans-symbols-license.txt
+  fonts:
+    - family: SportsmanSymbols
+      fonts:
+        - asset: assets/fonts/noto-sans-symbols.ttf
+    - family: SportsmanSans
+      fonts:
+        - asset: assets/fonts/roboto-regular.ttf
+        - asset: assets/fonts/roboto-bold.ttf
+          weight: 700
