@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:path_provider/path_provider.dart';
+import 'persistent_store.dart';
+
 import 'package:sportsman/data/api/model/api_split.dart';
 
 import '../model/api_checkpoint.dart';
@@ -20,36 +20,12 @@ class LocalService {
   /// Путь к файлу отметок
   final String _pathCheckpoints = 'data/checkpoints.json';
 
-  /// Получаем файл из файловой системы по адресу [путь].
-  ///
-  /// Если файла нет, то происходит его запись.
-  Future<File> _getFile(String path) async {
-    final pathDirectory = await _pathApplicationDirectory;
-    return await File('$pathDirectory/$path').create(recursive: true);
-  }
+  final PersistentStore _store = PersistentStore();
 
-  Future<String> get _pathApplicationDirectory async {
-    final directory = await getApplicationDocumentsDirectory();
-    return directory.path;
-  }
-
-  /// Перезаписываем содержание файла по адресу [путь].
-  Future _writeFile(String path, String contents) async {
-    final file = await _getFile(path);
-    await file.writeAsString(contents);
-  }
-
-  /// Получаем содержание файла по адресу [путь].
-  Future<String> _readFile(String path) async {
-    final file = await _getFile(path);
-    return await file.readAsString();
-  }
-
-  /// Удаляет файл из файловой системы по адресу [путь].
-  Future _deleteFile(String path) async {
-    final file = await _getFile(path);
-    await file.delete();
-  }
+  Future<void> _writeFile(String path, String contents) =>
+      _store.write(path, contents);
+  Future<String> _readFile(String path) => _store.read(path);
+  Future<void> _deleteFile(String path) => _store.remove(path);
   //#endregion
 
   //#region Пользователь
@@ -99,16 +75,7 @@ class LocalService {
 
   /// Записать данные отметки в список.
   Future setCheckpoint(Map map) async {
-    final contents = await _readFile(_pathCheckpoints);
-    late List<dynamic> dataList;
-    if (contents.isNotEmpty) {
-      dataList = jsonDecode(contents);
-    } else {
-      dataList = <dynamic>[];
-    }
-    dataList.add(map);
-    final content = jsonEncode(dataList);
-    await _writeFile(_pathCheckpoints, content);
+    await _store.append(_pathCheckpoints, map);
   }
 
   /// Очистить данные списка отметок.
